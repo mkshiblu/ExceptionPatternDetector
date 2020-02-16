@@ -10,9 +10,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 
 import jeaphunter.plugin.util.PluginConsole;
 
-public class JeapHunterHandler /*extends AbstractHandler*/ {
+public class JeapHunterHandler extends AbstractHandler {
 
-	//@Override
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
