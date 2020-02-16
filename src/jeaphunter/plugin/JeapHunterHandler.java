@@ -1,4 +1,4 @@
-package jeaphunter.plugin.handlers;
+package jeaphunter.plugin;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -8,12 +8,14 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 
-import jeaphunter.plugin.util.PluginConsole;
-
 public class JeapHunterHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
+		
+		// Init plugin workspace console
+		PluginConsole.init();
+		
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 
