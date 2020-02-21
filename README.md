@@ -59,8 +59,7 @@ try{
 }
 
 
-foo () thows IOException {
-  thow new FileNotException
+foo () {
 }
 
 ````
@@ -72,6 +71,7 @@ foo () thows IOException {
 - This could lead to many deep level checking. For this tool, we can put a thehsold of 4-5 levels,
 - For now we should only checked
 
+- UnChecked exception like NullPointerException might not have that throws declaration in the method signature
 
 ##### Test data
 - Need to apply our tool on a Large (But not gigantice) project to show the results
