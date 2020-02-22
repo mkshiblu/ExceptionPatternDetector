@@ -28,13 +28,13 @@ public class JeapHunterHandler extends AbstractHandler {
 
 		IProject[] projects = root.getProjects();
 
-		detectAnitPatterns(projects);
+		detectAntiPatterns(projects);
 
 		return null;
 	}
 
-	public static void detectAnitPatterns(IProject[] projects) {
-		PluginConsole.writeLine("Hello");
+	public static void detectAntiPatterns(IProject[] projects) {
+		//PluginConsole.writeLine("Hello");
 
 		JeapHunter hunter;
 		for (IProject project : projects) {
