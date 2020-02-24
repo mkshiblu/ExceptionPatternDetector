@@ -66,6 +66,7 @@ public class JeapHunter {
 	}
 
 	public void detectOverCatch(CompilationUnit compilationUnit) {
-
+		TryStatementVisitor try_state_visitor=new TryStatementVisitor();
+		compilationUnit.accept(try_state_visitor);
 	}
 }
