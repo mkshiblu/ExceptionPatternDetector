@@ -1,13 +1,17 @@
 package jeaphunter;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.CatchClause;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.TryStatement;
 
 import jeaphunter.plugin.PluginConsole;
+import jeaphunter.visitors.MethodDeclarationVisitor;
 import jeaphunter.visitors.TryStatementVisitor;
 
 /**
@@ -20,6 +24,7 @@ public class JeapHunter {
 		this.project = project;
 	}
 	private HashSet<TryStatement> projectNestedTryStatements = new HashSet<TryStatement>();
+	private HashMap<CompilationUnit,HashSet<MethodDeclaration>> unit_methods= new HashMap<CompilationUnit,HashSet<MethodDeclaration>>();
 	/**
 	 * Detects all Exception anti-patterns in the project
 	 */
@@ -65,8 +70,17 @@ public class JeapHunter {
 
 	}
 
+	
 	public void detectOverCatch(CompilationUnit compilationUnit) {
+		System.out.println("Start over Catch 1");
 		TryStatementVisitor try_state_visitor=new TryStatementVisitor();
 		compilationUnit.accept(try_state_visitor);
+		
+	}
+	public void getAllUnitMethods(CompilationUnit compilationUnit) {
+		MethodDeclarationVisitor method_visitor= new MethodDeclarationVisitor();
+		compilationUnit.accept(method_visitor);
+		unit_methods.put(compilationUnit,method_visitor.getAllMethods());
+		
 	}
 }
