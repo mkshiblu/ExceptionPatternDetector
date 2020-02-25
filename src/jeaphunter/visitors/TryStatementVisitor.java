@@ -1,6 +1,7 @@
 package jeaphunter.visitors;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -13,8 +14,9 @@ import org.eclipse.jdt.core.dom.TryStatement;
 
 public class TryStatementVisitor extends ASTVisitor {
 	
-	private static List<MethodInvocation> invoked_methods=new ArrayList<>();
+//	private static List<MethodInvocation> invoked_methods=new ArrayList<>();
 	private static List<String> catch_exceptions = new ArrayList<>();
+	private HashMap<String,String> invoked_methods=new HashMap<>();
 	
 	private HashSet<TryStatement> tryStatements = new HashSet<>();
 	public HashSet<TryStatement> getTryStatements() {
@@ -24,14 +26,14 @@ public class TryStatementVisitor extends ASTVisitor {
 	public boolean visit(TryStatement node) {
 		MethodInvocationVisitor methodInvocationVisitor = new MethodInvocationVisitor("TryInvocSwitch");
 		node.accept(methodInvocationVisitor);
+	
 		
 		tryStatements.add(node);
-
 		return super.visit(node);
 	}
 	
 
-	public List<MethodInvocation> getInvokedMethods(){
+	public HashMap<String,String> getInvokedMethods(){
 		
 		return invoked_methods;
 	}

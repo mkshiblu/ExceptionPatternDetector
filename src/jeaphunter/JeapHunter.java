@@ -24,7 +24,7 @@ public class JeapHunter {
 		this.project = project;
 	}
 	private HashSet<TryStatement> projectNestedTryStatements = new HashSet<TryStatement>();
-	private HashMap<CompilationUnit,HashSet<MethodDeclaration>> unit_methods= new HashMap<CompilationUnit,HashSet<MethodDeclaration>>();
+
 	/**
 	 * Detects all Exception anti-patterns in the project
 	 */
@@ -37,6 +37,7 @@ public class JeapHunter {
 			for (CompilationUnit compilationUnit : compilationUnits) {
 				projectNestedTryStatements.addAll(detectNestedTry(compilationUnit));
 				detectDestructiveWrapping(compilationUnit);
+//				System.out.println(compilationUnit.getJavaElement().getElementName());
 				detectOverCatch(compilationUnit);
 			}
 		} catch (JavaModelException e) {
@@ -77,10 +78,5 @@ public class JeapHunter {
 		compilationUnit.accept(try_state_visitor);
 		
 	}
-	public void getAllUnitMethods(CompilationUnit compilationUnit) {
-		MethodDeclarationVisitor method_visitor= new MethodDeclarationVisitor();
-		compilationUnit.accept(method_visitor);
-		unit_methods.put(compilationUnit,method_visitor.getAllMethods());
-		
-	}
+	
 }
