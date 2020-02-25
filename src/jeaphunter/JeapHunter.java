@@ -76,6 +76,7 @@ public class JeapHunter {
 		System.out.println("Start over Catch 1");
 		TryStatementVisitor try_state_visitor=new TryStatementVisitor();
 		compilationUnit.accept(try_state_visitor);
+		System.out.println(try_state_visitor.overCatchAntiPattern());
 		
 	}
 	

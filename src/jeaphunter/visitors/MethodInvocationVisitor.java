@@ -2,6 +2,7 @@ package jeaphunter.visitors;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -21,67 +22,57 @@ public class MethodInvocationVisitor extends ASTVisitor {
     private static String[] PrintMethods = {"println", "print"}; // "print statement"
 	private static String[] DefaultMethods = {"printStackTrace"}; // display statement
 	
-	private String  TryInvocSwitch;
-	private List<String> invoked_exceptions = new ArrayList<>();
-	private HashMap<String,String> invoked_methods=new HashMap<>();
+	private static HashSet<String> all_invoked_exceptions = new HashSet<>();
+	private static String  TryInvocSwitch;
 	
 	private CompilationUnit[] compilationUnits;
 	
 	
 	
-	public MethodInvocationVisitor(String TryInvoccSwitch) {
-		this.TryInvocSwitch =  TryInvocSwitch;
+	public MethodInvocationVisitor(String TryInvocSwitch) {
+		this.TryInvocSwitch = TryInvocSwitch;	
 	}
 	
 	public boolean visit(MethodInvocation node) {
-
-		List<CompilationUnit> compilationUnitList = new ArrayList<>();
 		
-		System.out.println("MethodInvocation");
-		IMethodBinding methodBinding=node.resolveMethodBinding();
-		String nodeName = node.getName().toString();
-		String className = methodBinding.getDeclaringClass().getName().toString();
-		if(methodBinding!=null && !IsLoggingStatement(nodeName) && !IsDefaultStatement(nodeName) && 
-		!IsPrintStatement(nodeName)&& !className.equals("Throwable") ) {
-			System.out.println("Class name "+ className);
-			System.out.println("Node name "+ nodeName);
-			invoked_methods.put(className,nodeName);
-			System.out.println(methodBinding.getJavaElement());
-			if(methodBinding.getJavaElement() instanceof IMember) {
-				IMember member =(IMember) methodBinding.getJavaElement();
-				ICompilationUnit cu=member.getCompilationUnit();
-				compilationUnitList.add(parse(cu));
-				compilationUnits = compilationUnitList.toArray(new CompilationUnit[compilationUnitList.size()]);
-				System.out.println("start cu");
-				System.out.println(cu.toString());
-				System.out.println("get cu");
-				System.out.println("print unit");
-				getSecondLevelInvokedMethod(compilationUnits,nodeName);
-				printUnit();
-			}
+		
+		if(TryInvocSwitch.equals("TryInvocSwitch")){
+			System.out.println("TryInvocSwitch");
+			System.out.println(TryInvocSwitch);
+			System.out.println("ProcessBinding");
+			processBinding(node,"second_level");				
+		}else if(TryInvocSwitch.equals("second_level")){
+			System.out.println("second_level invoke");
+			System.out.println(TryInvocSwitch);
+			processBinding(node,"third_level");
 			
-	
-			System.out.println(".getDeclaredMethods()"+methodBinding.getDeclaringClass().getDeclaredMethods());
-			 for(ITypeBinding exception:methodBinding.getExceptionTypes()) {
-//				 System.out.println("Exception ToString" +exception.toString());
-				 invoked_exceptions.add(exception.toString());
-			 }
+		}else if(TryInvocSwitch.equals("third_level")) {
+			System.out.println("third_level_invoke");
+			System.out.println(TryInvocSwitch);
+			processBinding(node,"forth_level");
+			
+		}else if(TryInvocSwitch.equals("forth_level")) {
+			System.out.println("forth_level_invoke");
+			System.out.println(TryInvocSwitch);
+			processBinding(node,"fifth_level");
+			
+		}else if(TryInvocSwitch.equals("fifth_level")) {
+			System.out.println("fifth_level_invoke");
+			System.out.println(TryInvocSwitch);
+			processBinding(node,"six_level");
+			
 		}
-		
 		return super.visit(node);
 	}
 	
-	public void getSecondLevelInvokedMethod(CompilationUnit[] cus, String nodename){
+	public void getNextLevelInvokedMethod(CompilationUnit[] cus, String nodename,String level){
 		System.out.println("start comapre");
 		for(CompilationUnit unit: cus) {
-			if(unit.toString().contains(nodename))
-			{
-				MethodDeclarationVisitor MDvisitor = new MethodDeclarationVisitor(nodename);
-				unit.accept(MDvisitor);
+//			System.out.println(unit.toString());
+			System.out.println("***************go to method declartion 2");
+			MethodDeclarationVisitor MDvisitor = new MethodDeclarationVisitor(nodename,level);
+			unit.accept(MDvisitor);
 			}
-		}
-		
-		
 	}
 	
 	
@@ -141,8 +132,38 @@ public class MethodInvocationVisitor extends ASTVisitor {
 		return (CompilationUnit) parser.createAST(null); // parse
 	}
 	
+	public HashSet<String> getAllException() {
+		return all_invoked_exceptions;
+	}
+	
 	public void printUnit() {
 		System.out.println(compilationUnits.toString());
 	}
 	
+	public void processBinding(MethodInvocation node,String level) {
+		List<CompilationUnit> compilationUnitList = new ArrayList<>();
+		IMethodBinding methodBinding=node.resolveMethodBinding();
+		
+//	    1. Collect all the exception of the first level binding in a list 
+			 for(ITypeBinding exception:methodBinding.getExceptionTypes()) {
+//				 System.out.println("Exception ToString" +exception.toString());
+				 all_invoked_exceptions.add(exception.toString());
+			 }
+//		2. Go to the second level binding of the invoked method in try block
+			String nodeName = node.getName().toString();
+			String className = methodBinding.getDeclaringClass().getName().toString();
+			if(methodBinding!=null && !IsLoggingStatement(nodeName) && !IsDefaultStatement(nodeName) && 
+			!IsPrintStatement(nodeName)&& !className.equals("Throwable") ) {
+//		3. Find the invoked method's original java class and covert the class to CompilationUnit for parsing
+				if(methodBinding.getJavaElement() instanceof IMember) {
+					IMember member =(IMember) methodBinding.getJavaElement();
+					ICompilationUnit cu=member.getCompilationUnit();
+					compilationUnitList.add(parse(cu));
+					compilationUnits = compilationUnitList.toArray(new CompilationUnit[compilationUnitList.size()]);
+//		4. 	Filter the invoked method in the original class and re-find whether the invoked method contains another 
+//					invoked methods in the original method block
+					getNextLevelInvokedMethod(compilationUnits,nodeName,level);
+				}
+			}
+		}	
 }
