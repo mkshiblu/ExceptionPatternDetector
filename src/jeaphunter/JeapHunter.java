@@ -1,15 +1,17 @@
 package jeaphunter;
 
-import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.TryStatement;
 
-import jeaphunter.plugin.PluginConsole;
+import jeaphunter.antipatterns.OverCatchAntiPattern;
 import jeaphunter.visitors.TryStatementVisitor;
+import jeaphunter.visitors.Visitor;
 
 /**
  * Class contains various exception anti-pattern detection methods
@@ -82,6 +84,12 @@ public class JeapHunter {
 	 * @param compilationUnit
 	 */
 	public void detectOverCatch(CompilationUnit compilationUnit) {
-		Console.println("Detecting Over Catch for ..." + compilationUnit);
+		
+		Visitor visitor = new Visitor();
+		compilationUnit.accept(visitor);
+		
+		ArrayList<OverCatchAntiPattern> ocs = visitor.getOverCatchAntiPatterns();
+		
+		System.out.println(Arrays.toString(ocs.toArray()));
 	}
 }

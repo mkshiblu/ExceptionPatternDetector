@@ -44,7 +44,7 @@ public class Main {
 
 		for (File f : files) {
 			if (f.isFile() && f.getAbsolutePath().endsWith(".java")) {
-				sourceFiles.add(parse(f.getCanonicalPath()));
+				sourceFiles.add(parse(readFileToString(f.getCanonicalPath())));
 			}
 		}
 
@@ -70,6 +70,7 @@ public class Main {
 	public static CompilationUnit parse(String str) {
 		ASTParser parser = ASTParser.newParser(AST.JLS13);
 		parser.setSource(str.toCharArray());
+		parser.setResolveBindings(true);
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);
 
 		return (CompilationUnit) parser.createAST(null);
@@ -110,7 +111,6 @@ public class Main {
 		}
 
 		reader.close();
-
 		return fileData.toString();
 	}
 }
