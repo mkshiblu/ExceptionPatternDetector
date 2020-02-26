@@ -24,7 +24,11 @@ public class JeapHunterProject {
 	public JeapHunterProject(IProject project) {
 		this.project = project;
 	}
-
+	
+	public JeapHunterProject(CompilationUnit[] compilationUnits) {
+		this.compilationUnits = compilationUnits;
+	}
+	
 	/**
 	 * Returns all the compilation units of this project. The result it cached after
 	 * the first time
