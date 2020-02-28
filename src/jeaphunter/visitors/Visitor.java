@@ -31,17 +31,10 @@ public class Visitor extends ASTVisitor {
 	private CompilationUnit cu;
 	private String filePath;
 
-	public Visitor() {
+	JTryStatement parentTry;
 
-	}
-
-	public Visitor(String filePath) {
-		this.filePath = filePath;
-	}
-
-	public Visitor(CompilationUnit cu, String filePath) {
-		this(filePath);
-		this.cu = cu;
+	public Visitor(JTryStatement parentTry) {
+		this.parentTry = parentTry;
 	}
 
 	@Override
@@ -64,30 +57,30 @@ public class Visitor extends ASTVisitor {
 			}
 		}
 
+		
 		jTryStatements.add(jTry);
 
+		Visitor v = new Visitor(jTry);
+		node.getBody().accept(v);
+		
 		// Skip child block visits
 		return false;//
+	}
+
+	@Override
+	public boolean visit(MethodInvocation node) {
+		parentTry.addToInvokedMethods(node);
+		return false;
+	}
+
+	@Override
+	public boolean visit(ThrowStatement node) {
+		parentTry.addToThrowedStatements(node);
+		Expression exp = node.getExpression();
+		return false;
 	}
 
 	public List<JTryStatement> getTryStatements() {
 		return jTryStatements;
 	}
-//
-//	@Override
-//	public boolean visit(CatchClause node) {
-//
-//		// System.out.println(node);
-//		return super.visit(node);
-//	}
-//
-//	@Override
-//	public boolean visit(ThrowStatement node) {
-//
-//		Expression exp = node.getExpression();
-//
-//		System.out.println(exp);
-//		return super.visit(node);
-//	}
-
 }

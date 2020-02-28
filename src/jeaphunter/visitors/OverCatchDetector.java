@@ -13,7 +13,14 @@ public class OverCatchDetector {
 	}
 
 	public void detect() {
-		for (JTryStatement jtry : tryStatements) {
+		for (JTryStatement jTry : tryStatements) {
+
+			// Skip if no catch clause
+			if (!jTry.hasCatchClauses())
+				continue;
+
+			Visitor visitor = new Visitor(jTry);
+			jTry.getBody().accept(visitor);
 		}
 	}
 }

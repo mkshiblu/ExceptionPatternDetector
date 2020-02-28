@@ -70,6 +70,9 @@ public class TryVisitor extends ASTVisitor {
 		return false;//
 	}
 
+	/**
+	 * Returns only the root level try statements
+	 */
 	public List<JTryStatement> getTryStatements() {
 		return jTryStatements;
 	}

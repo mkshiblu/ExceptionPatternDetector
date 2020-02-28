@@ -96,6 +96,10 @@ public class JTryStatement {
 		this.startColumnInSource = startColumnInSource;
 	}
 
+	public boolean hasCatchClauses() {
+		return this.catchClauses.size() > 0;
+	}
+
 	/**
 	 * Generates unique id based on sourceifle+row+col
 	 */

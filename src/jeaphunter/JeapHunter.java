@@ -29,7 +29,7 @@ public class JeapHunter {
 	private HashSet<TryStatement> projectNestedTryStatements = new HashSet<TryStatement>();
 
 	PrintStream console = System.out;
-	
+
 	public JeapHunter(JeapHunterProject project) {
 		this.project = project;
 	}
@@ -84,14 +84,16 @@ public class JeapHunter {
 		TryVisitor visitor = new TryVisitor(cu, sourceFile.getFilePath());
 		cu.accept(visitor);
 
-		List<JTryStatement> allTryStatements = visitor.getTryStatements();
+		List<JTryStatement> rootLevelTryStatements = visitor.getTryStatements();
 
-		for (JTryStatement jtry : allTryStatements) {
+		System.out.println("Total Root Try: " + rootLevelTryStatements.size());
+		OverCatchDetector ocd = new OverCatchDetector(rootLevelTryStatements);
+		ocd.detect();
+
+		for (JTryStatement jtry : rootLevelTryStatements) {
 			console.println(jtry);
 		}
-		
-		OverCatchDetector ocd = new OverCatchDetector(allTryStatements);
-		ocd.detect();
+
 	}
 
 	private void printNestedTryResults() {
