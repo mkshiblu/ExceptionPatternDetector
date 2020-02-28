@@ -48,7 +48,7 @@ public class Main {
 			}
 		}
 
-		return sourceFiles.toArray(CompilationUnit[]::new);
+		return sourceFiles.toArray(new CompilationUnit[0]);
 	}
 
 	public static void listFiles(String directoryName, List<File> files) {

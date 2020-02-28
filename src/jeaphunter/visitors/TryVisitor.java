@@ -24,22 +24,22 @@ import org.eclipse.jdt.internal.corext.dom.ASTNodes;
 import jeaphunter.antipattern.OverCatchAntiPattern;
 import jeaphunter.entities.JTryStatement;
 
-public class Visitor extends ASTVisitor {
+public class TryVisitor extends ASTVisitor {
 
 	private List<JTryStatement> jTryStatements = new ArrayList<>();
 
 	private CompilationUnit cu;
 	private String filePath;
 
-	public Visitor() {
+	public TryVisitor() {
 
 	}
 
-	public Visitor(String filePath) {
+	public TryVisitor(String filePath) {
 		this.filePath = filePath;
 	}
 
-	public Visitor(CompilationUnit cu, String filePath) {
+	public TryVisitor(CompilationUnit cu, String filePath) {
 		this(filePath);
 		this.cu = cu;
 	}
@@ -90,4 +90,21 @@ public class Visitor extends ASTVisitor {
 //		return super.visit(node);
 //	}
 
+	// , this only works when the method is declared in an Eclipse project
+	static void declarationFromInvocation(MethodInvocation node) {
+		IMethodBinding binding = (IMethodBinding) node.getName().resolveBinding();
+		ICompilationUnit unit = (ICompilationUnit) binding.getJavaElement().getAncestor(IJavaElement.COMPILATION_UNIT);
+
+		if (unit == null) {
+			// not available, external declaration
+			return;
+		}
+
+		ASTParser parser = ASTParser.newParser(AST.JLS13);
+		parser.setKind(ASTParser.K_COMPILATION_UNIT);
+		parser.setSource(unit);
+		parser.setResolveBindings(true);
+		CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+		MethodDeclaration decl = (MethodDeclaration) cu.findDeclaringNode(binding.getKey());
+	}
 }

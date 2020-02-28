@@ -4,14 +4,19 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.TryStatement;
 
-import jeaphunter.antipatterns.OverCatchAntiPattern;
+import jeaphunter.antipattern.OverCatchAntiPattern;
+import jeaphunter.entities.JTryStatement;
+import jeaphunter.plugin.PluginConsole;
+import jeaphunter.visitors.OverCatchDetector;
 import jeaphunter.visitors.TryStatementVisitor;
-import jeaphunter.visitors.Visitor;
+import jeaphunter.visitors.TryVisitor;
 
 /**
  * Class contains various exception anti-pattern detection methods
@@ -19,10 +24,12 @@ import jeaphunter.visitors.Visitor;
 public class JeapHunter {
 
 	public static PrintStream Console = System.out;
-	
+
 	private JeapHunterProject project;
 	private HashSet<TryStatement> projectNestedTryStatements = new HashSet<TryStatement>();
 
+	PrintStream console = System.out;
+	
 	public JeapHunter(JeapHunterProject project) {
 		this.project = project;
 	}
@@ -31,33 +38,23 @@ public class JeapHunter {
 	 * Detects all Exception anti-patterns in the project
 	 */
 	public void detectAllExceptionAntiPatterns() {
-		CompilationUnit[] compilationUnits;
+		SourceFile[] sourceFiles;
 		try {
-			compilationUnits = project.getAllCompilationUnits();
-			for (CompilationUnit compilationUnit : compilationUnits) {
-				// projectNestedTryStatements.addAll(detectNestedTry(compilationUnit));
-				detectDestructiveWrapping(compilationUnit);
-				detectOverCatch(compilationUnit);
+			sourceFiles = project.getSourceFiles();
+			for (SourceFile sourceFile : sourceFiles) {
+				// projectNestedTryStatements.addAll(detectNestedTry(sourceFile));
+				detectDestructiveWrapping(sourceFile);
+				detectOverCatch(sourceFile);
 			}
 		} catch (JavaModelException e) {
 			e.printStackTrace();
 		}
 
-		/// PluginConsole.writeLine("NESTED TRY RESULTS(" +
-		/// projectNestedTryStatements.size() + " items):\n");
-
-		for (TryStatement nestedTryStatement : projectNestedTryStatements) {
-			CompilationUnit compilationUnit = (CompilationUnit) nestedTryStatement.getRoot();
-			int lineNumber = compilationUnit.getLineNumber(nestedTryStatement.getStartPosition());
-			// PluginConsole.writeLine(compilationUnit.getTypeRoot().getJavaProject().getProject().getName()+"
-			// project: ");
-			// PluginConsole.writeLine(compilationUnit.getTypeRoot().getElementName() + " at
-			// Line:" + lineNumber + "\n");
-			// PluginConsole.writeLine(nestedTryStatement.toString()+"\n");
-		}
+		// printNestedTryResults();
 	}
 
-	public HashSet<TryStatement> detectNestedTry(CompilationUnit compilationUnit) {
+	public HashSet<TryStatement> detectNestedTry(SourceFile sourceFile) {
+		CompilationUnit compilationUnit = sourceFile.getCompilationUnit();
 		TryStatementVisitor compilationUnitTryVisitor = new TryStatementVisitor();
 		HashSet<TryStatement> compilationUnitNestedTryStatements = new HashSet<>();
 		compilationUnit.accept(compilationUnitTryVisitor);
@@ -73,23 +70,40 @@ public class JeapHunter {
 		return compilationUnitNestedTryStatements;
 	}
 
-	public void detectDestructiveWrapping(CompilationUnit compilationUnit) {
+	public void detectDestructiveWrapping(SourceFile sourceFile) {
 
 	}
 
 	/**
-	 * Detect patterns when catch is given but there is now throw for that catch
-	 * inside the try
+	 * Detect patterns when catch is given but there is no throw for that catch
 	 * 
 	 * @param compilationUnit
 	 */
-	public void detectOverCatch(CompilationUnit compilationUnit) {
+	public void detectOverCatch(SourceFile sourceFile) {
+		CompilationUnit cu = sourceFile.getCompilationUnit();
+		TryVisitor visitor = new TryVisitor(cu, sourceFile.getFilePath());
+		cu.accept(visitor);
+
+		List<JTryStatement> allTryStatements = visitor.getTryStatements();
+
+		for (JTryStatement jtry : allTryStatements) {
+			console.println(jtry);
+		}
 		
-		Visitor visitor = new Visitor();
-		compilationUnit.accept(visitor);
-		
-		ArrayList<OverCatchAntiPattern> ocs = visitor.getOverCatchAntiPatterns();
-		
-		System.out.println(Arrays.toString(ocs.toArray()));
+		OverCatchDetector ocd = new OverCatchDetector(allTryStatements);
+		ocd.detect();
+	}
+
+	private void printNestedTryResults() {
+		PluginConsole.writeLine("NESTED TRY RESULTS(" + projectNestedTryStatements.size() + " items):\n");
+
+		for (TryStatement nestedTryStatement : projectNestedTryStatements) {
+			CompilationUnit compilationUnit = (CompilationUnit) nestedTryStatement.getRoot();
+			int lineNumber = compilationUnit.getLineNumber(nestedTryStatement.getStartPosition());
+			PluginConsole
+					.writeLine(compilationUnit.getTypeRoot().getJavaProject().getProject().getName() + " project: ");
+			PluginConsole.writeLine(compilationUnit.getTypeRoot().getElementName() + " at Line:" + lineNumber + "\n");
+			// PluginConsole.writeLine(nestedTryStatement.toString() + "\n");
+		}
 	}
 }
