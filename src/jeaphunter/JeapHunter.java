@@ -82,11 +82,10 @@ public class JeapHunter {
 	public void detectOverCatch(SourceFile sourceFile) {
 		CompilationUnit cu = sourceFile.getCompilationUnit();
 		TryVisitor visitor = new TryVisitor(cu, sourceFile.getFilePath());
+		visitor.setMustHaveCatchClause(true);
 		cu.accept(visitor);
 
 		List<JTryStatement> rootLevelTryStatements = visitor.getTryStatements();
-
-		System.out.println("Total Root Try: " + rootLevelTryStatements.size());
 		OverCatchDetector ocd = new OverCatchDetector(rootLevelTryStatements);
 		ocd.detect();
 

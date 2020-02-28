@@ -31,6 +31,11 @@ public class TryVisitor extends ASTVisitor {
 	private CompilationUnit cu;
 	private String filePath;
 
+	/**
+	 * Consider try which have catch clause
+	 */
+	private boolean mustHaveCatchClause;
+
 	public TryVisitor() {
 
 	}
@@ -46,6 +51,9 @@ public class TryVisitor extends ASTVisitor {
 
 	@Override
 	public boolean visit(TryStatement node) {
+		if (mustHaveCatchClause && (node.catchClauses() == null || node.catchClauses().size() == 0))
+			return true;
+
 		JTryStatement jTry = new JTryStatement();
 		jTry.addCatchClauses(node.catchClauses());
 		jTry.setBody(node.getBody());
@@ -76,22 +84,15 @@ public class TryVisitor extends ASTVisitor {
 	public List<JTryStatement> getTryStatements() {
 		return jTryStatements;
 	}
-//
-//	@Override
-//	public boolean visit(CatchClause node) {
-//
-//		// System.out.println(node);
-//		return super.visit(node);
-//	}
-//
-//	@Override
-//	public boolean visit(ThrowStatement node) {
-//
-//		Expression exp = node.getExpression();
-//
-//		System.out.println(exp);
-//		return super.visit(node);
-//	}
+
+	/**
+	 * Set true to consider only try blocks with catch clause
+	 * 
+	 * @param enabled
+	 */
+	public void setMustHaveCatchClause(boolean mustHaveCatchClause) {
+		this.mustHaveCatchClause = mustHaveCatchClause;
+	}
 
 	// , this only works when the method is declared in an Eclipse project
 	static void declarationFromInvocation(MethodInvocation node) {

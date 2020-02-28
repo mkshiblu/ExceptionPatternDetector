@@ -16,6 +16,7 @@ public class JTryStatement {
 	private List<CatchClause> catchClauses = new ArrayList<>();
 	private List<MethodInvocation> invokedMethods = new ArrayList<>();
 	private List<ThrowStatement> throwedStatements = new ArrayList<>();
+	private List<JTryStatement> nestedTryStatements = new ArrayList<>();
 	private Block body;
 
 	private String sourceFilePath;
@@ -57,6 +58,18 @@ public class JTryStatement {
 
 	public void addToThrowedStatements(ThrowStatement throwStatement) {
 		this.throwedStatements.add(throwStatement);
+	}
+
+	public void addToNestedTryStatements(List<JTryStatement> nestedTryStatements) {
+		this.nestedTryStatements.addAll(nestedTryStatements);
+	}
+
+	public void addToNestedTryStatements(JTryStatement nestedTryStatement) {
+		this.nestedTryStatements.add(nestedTryStatement);
+	}
+
+	public List<JTryStatement> geteNestedTryStatements() {
+		return nestedTryStatements;
 	}
 
 	public Block getBody() {
