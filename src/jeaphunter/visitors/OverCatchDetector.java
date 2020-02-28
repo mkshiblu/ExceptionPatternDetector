@@ -1,5 +1,6 @@
 package jeaphunter.visitors;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jeaphunter.entities.JTryStatement;
@@ -12,15 +13,16 @@ public class OverCatchDetector {
 		this.tryStatements = tryStatements;
 	}
 
-	public void detect() {
+	public List<JTryStatement> detect() {
+		List<JTryStatement> result = new ArrayList<>();
+		
 		for (JTryStatement jTry : tryStatements) {
-
-			// Skip if no catch clause
-			if (!jTry.hasCatchClauses())
-				continue;
-
 			Visitor visitor = new Visitor(jTry);
 			jTry.getBody().accept(visitor);
+
+			result.add(jTry);
 		}
+		
+		return result;
 	}
 }

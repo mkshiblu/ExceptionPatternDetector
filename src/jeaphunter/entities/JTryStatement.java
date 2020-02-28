@@ -16,6 +16,7 @@ public class JTryStatement {
 	private List<CatchClause> catchClauses = new ArrayList<>();
 	private List<MethodInvocation> invokedMethods = new ArrayList<>();
 	private List<ThrowStatement> throwedStatements = new ArrayList<>();
+	private List<JType> thrownExceptionTypes = new ArrayList<>();
 	private List<JTryStatement> nestedTryStatements = new ArrayList<>();
 	private Block body;
 
@@ -70,6 +71,10 @@ public class JTryStatement {
 
 	public List<JTryStatement> geteNestedTryStatements() {
 		return nestedTryStatements;
+	}
+
+	public void addToThrownExceptionTypes(JType exceptionType) {
+		this.thrownExceptionTypes.add(exceptionType);
 	}
 
 	public Block getBody() {
@@ -127,5 +132,9 @@ public class JTryStatement {
 		}
 
 		return uniqueId;
+	}
+
+	public List<JType> getThrownExceptionTypes() {
+		return thrownExceptionTypes;
 	}
 }

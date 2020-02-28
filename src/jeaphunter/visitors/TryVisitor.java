@@ -68,7 +68,7 @@ public class TryVisitor extends ASTVisitor {
 				int lineNo = ((CompilationUnit) root).getLineNumber(node.getStartPosition());
 				int columnNo = ((CompilationUnit) root).getColumnNumber(node.getStartPosition());
 				jTry.setStartLineInSource(lineNo);
-				jTry.setStartColumnInSource(lineNo);
+				jTry.setStartColumnInSource(columnNo);
 			}
 		}
 
@@ -92,23 +92,5 @@ public class TryVisitor extends ASTVisitor {
 	 */
 	public void setMustHaveCatchClause(boolean mustHaveCatchClause) {
 		this.mustHaveCatchClause = mustHaveCatchClause;
-	}
-
-	// , this only works when the method is declared in an Eclipse project
-	static void declarationFromInvocation(MethodInvocation node) {
-		IMethodBinding binding = (IMethodBinding) node.getName().resolveBinding();
-		ICompilationUnit unit = (ICompilationUnit) binding.getJavaElement().getAncestor(IJavaElement.COMPILATION_UNIT);
-
-		if (unit == null) {
-			// not available, external declaration
-			return;
-		}
-
-		ASTParser parser = ASTParser.newParser(AST.JLS13);
-		parser.setKind(ASTParser.K_COMPILATION_UNIT);
-		parser.setSource(unit);
-		parser.setResolveBindings(true);
-		CompilationUnit cu = (CompilationUnit) parser.createAST(null);
-		MethodDeclaration decl = (MethodDeclaration) cu.findDeclaringNode(binding.getKey());
 	}
 }
