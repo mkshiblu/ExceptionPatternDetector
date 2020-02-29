@@ -2,19 +2,15 @@ package jeaphunter;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.TryStatement;
 
-import jeaphunter.antipattern.OverCatchAntiPattern;
 import jeaphunter.entities.JTryStatement;
 import jeaphunter.plugin.PluginConsole;
-import jeaphunter.visitors.OverCatchDetector;
 import jeaphunter.visitors.TryStatementVisitor;
 import jeaphunter.visitors.TryVisitor;
 
@@ -90,7 +86,7 @@ public class JeapHunter {
 		cu.accept(visitor);
 
 		List<JTryStatement> rootLevelTryStatements = visitor.getTryStatements();
-		OverCatchDetector ocd = new OverCatchDetector(rootLevelTryStatements);
+		AntiPatternDetector ocd = new AntiPatternDetector(rootLevelTryStatements);
 		return ocd.detect();
 	}
 

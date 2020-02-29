@@ -1,5 +1,6 @@
 package jeaphunter.visitors;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,16 +8,20 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.ConstructorInvocation;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.TagElement;
 import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.TryStatement;
 import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.jdt.internal.compiler.ast.ConstructorDeclaration;
 
 import jeaphunter.entities.JTryStatement;
-import jeaphunter.entities.JType;
 import jeaphunter.util.ASTUtil;
 
 public class Visitor extends ASTVisitor {
@@ -69,10 +74,23 @@ public class Visitor extends ASTVisitor {
 		List<Type> thrownFromSignature = declartion.thrownExceptionTypes();
 
 		for (Type type : thrownFromSignature) {
-			rootTry.addToThrownExceptionTypes(new JType(type));
+			ITypeBinding typeBinding = type.resolveBinding();
+			if (typeBinding == null) {
+				System.out.println("Cannot resolve binding for thow :" + type + "in " + node.getName());
+			} else {
+				rootTry.addToThrownExceptionTypes(typeBinding);
+			}
 		}
 
-		// TODO: CHeck if catch clause handles all of these
+		// TODO Check thrown from declaration javadoc if any throws
+		Javadoc javadoc = declartion.getJavadoc();
+		if (javadoc != null) {
+			List<ITypeBinding> thrownTypes = ASTUtil.getThrowableExceptionsFromJavadoc(javadoc);
+			for (ITypeBinding typeBinding : thrownTypes) {
+				rootTry.addToThrownExceptionTypes(typeBinding);
+			}
+		}
+
 		if (methodInvocationDepth == MAX_DEPTH_OF_SEARCHING_INSIDE_METHOD_INVOCATIONS)
 			return false;
 
@@ -83,37 +101,38 @@ public class Visitor extends ASTVisitor {
 	}
 
 	@Override
+	public void visit(ConstructorInvocation node) {
+		return false;
+	}
+
+	@Override
 	public boolean visit(ThrowStatement node) {
+		ITypeBinding typeBinding = null;
 		rootTry.addToThrowedStatements(node);
-
-		Type exceptionType = null;
-
 		try {
 			Expression expression = node.getExpression();
 			if (expression instanceof ClassInstanceCreation) {
-				ClassInstanceCreation instanceCreation = (ClassInstanceCreation) expression;
-				exceptionType = instanceCreation.getType();
+				typeBinding = ((ClassInstanceCreation) expression).resolveTypeBinding();
 			} else if (expression instanceof SimpleName) {
 				SimpleName simpleName = ((SimpleName) expression);
-				// exceptionType = simpleName.resolveTypeBinding().getTypeDeclaration();
-				// TODO: How to get TYpe?
+				typeBinding = simpleName.resolveTypeBinding();
 			} else if (expression instanceof MethodInvocation) {
 				MethodInvocation methodInvocation = ((MethodInvocation) expression);
 				MethodDeclaration declaration = ASTUtil.declarationFromInvocation(methodInvocation);
 				if (declaration != null) {
-					exceptionType = declaration.getReturnType2();
+					// get return type from the expression
+					typeBinding = declaration.getReturnType2().resolveBinding();
 				}
-
 				// TOOD: Also handle other probable cases
 			}
 		} catch (Exception ex) {
 			System.out.println("Exception determining the type of thrown exception type, ignoring: " + node);
 		}
 
-		if (exceptionType == null) {
+		if (typeBinding == null) {
 			System.out.println("Cannot determine the type of thrown exception type, ignoring: " + node);
 		} else {
-			rootTry.addToThrownExceptionTypes(new JType(exceptionType));
+			rootTry.addToThrownExceptionTypes(typeBinding);
 		}
 		return false;
 	}

@@ -1,13 +1,20 @@
 package jeaphunter.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IMethodBinding;
+import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.TagElement;
 
 public class ASTUtil {
 
@@ -34,5 +41,33 @@ public class ASTUtil {
 			System.out.println("Cannot resolve declaration for: " + node);
 		}
 		return md;
+	}
+
+	public static List<ITypeBinding> getThrowableExceptionsFromJavadoc(Javadoc javadoc) {
+		List<TagElement> tags = javadoc.tags();
+		List<ITypeBinding> thownTypes = new ArrayList<>();
+
+		for (TagElement tag : tags) {
+			String name = tag.getTagName();
+
+			if ("@throws".equals(name)) {
+				List fragments = tag.fragments();
+
+				if (fragments != null && fragments.size() > 0) {
+					Object fragment = fragments.get(0);
+					if (fragment instanceof SimpleName) {
+						SimpleName node = ((SimpleName) fragment);
+						ITypeBinding typeBinding = node.resolveTypeBinding();
+
+						if (typeBinding == null) {
+							System.out.println("Cannot resolve type binding: " + node);
+						} else {
+							thownTypes.add(typeBinding);
+						}
+					}
+				}
+			}
+		}
+		return thownTypes;
 	}
 }

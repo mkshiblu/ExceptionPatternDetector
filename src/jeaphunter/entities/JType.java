@@ -1,16 +1,19 @@
 package jeaphunter.entities;
 
-import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.jdt.core.dom.ITypeBinding;
 
 public class JType {
-	private Type type;
-	
-	public JType(Type type) {
-		this.type = type;
+	private ITypeBinding typeBinding;
+
+	public JType(ITypeBinding typeBinding) {
+		this.typeBinding = typeBinding;
 	}
-	
+
 	@Override
 	public String toString() {
-		return type.toString();
+		if (typeBinding != null)
+			return typeBinding.getQualifiedName();
+
+		return super.toString();
 	}
 }

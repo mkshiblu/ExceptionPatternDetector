@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CatchClause;
+import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.ThrowStatement;
 
@@ -16,8 +17,24 @@ public class JTryStatement {
 	private List<CatchClause> catchClauses = new ArrayList<>();
 	private List<MethodInvocation> invokedMethods = new ArrayList<>();
 	private List<ThrowStatement> throwedStatements = new ArrayList<>();
-	private List<JType> thrownExceptionTypes = new ArrayList<>();
+
+	/**
+	 * Directly or deeply nested (i.e. inside a method which is invoked from this
+	 * try) try blocks
+	 */
 	private List<JTryStatement> nestedTryStatements = new ArrayList<>();
+
+	/**
+	 * Holds all the throw statement exceptions excluding the ones not inside of
+	 * nested try blocks
+	 */
+	private List<ITypeBinding> thrownExceptionTypes = new ArrayList<>();
+
+	/**
+	 * Holds the binding of all the caught exception in the catch blocks of this try
+	 */
+	private List<ITypeBinding> catchBlockExceptionTypes = new ArrayList<>();
+
 	private Block body;
 
 	private String sourceFilePath;
@@ -30,11 +47,21 @@ public class JTryStatement {
 	}
 
 	public void addCatchClause(CatchClause catchClause) {
+		ITypeBinding typeBinding = catchClause.getException().getType().resolveBinding();
+		if (typeBinding != null) {
+			this.catchBlockExceptionTypes.add(typeBinding);
+		}
 		this.catchClauses.add(catchClause);
 	}
 
 	public void addCatchClauses(List<CatchClause> catchClauses) {
-		this.catchClauses.addAll(catchClauses);
+		for (CatchClause catchClause : catchClauses) {
+			this.addCatchClause(catchClause);
+		}
+	}
+
+	public List<ITypeBinding> getCatchClauseExceptionTypes() {
+		return catchBlockExceptionTypes;
 	}
 
 	public List<MethodInvocation> getInvokedMethods() {
@@ -73,7 +100,7 @@ public class JTryStatement {
 		return nestedTryStatements;
 	}
 
-	public void addToThrownExceptionTypes(JType exceptionType) {
+	public void addToThrownExceptionTypes(ITypeBinding exceptionType) {
 		this.thrownExceptionTypes.add(exceptionType);
 	}
 
@@ -134,7 +161,7 @@ public class JTryStatement {
 		return uniqueId;
 	}
 
-	public List<JType> getThrownExceptionTypes() {
+	public List<ITypeBinding> getThrownExceptionTypes() {
 		return thrownExceptionTypes;
 	}
 }

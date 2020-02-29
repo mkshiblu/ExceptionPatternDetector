@@ -9,6 +9,8 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.dom.*;
 
@@ -30,6 +32,18 @@ public class JeapHunterHandler extends AbstractHandler {
 
 		detectAntiPatterns(projects);
 
+//		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+//	    if (window != null)
+//	    {
+//	        IStructuredSelection selection = (IStructuredSelection) window.getSelectionService().getSelection();
+//	        Object firstElement = selection.getFirstElement();
+//	        if (firstElement instanceof IAdaptable)
+//	        {
+//	            IProject project = (IProject)((IAdaptable)firstElement).getAdapter(IProject.class);
+//	            IPath path = project.getFullPath();
+//	            System.out.println(path);
+//	        }
+//	    }
 		return null;
 	}
 
