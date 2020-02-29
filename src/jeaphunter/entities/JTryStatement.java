@@ -1,7 +1,9 @@
 package jeaphunter.entities;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CatchClause;
@@ -28,12 +30,12 @@ public class JTryStatement {
 	 * Holds all the throw statement exceptions excluding the ones not inside of
 	 * nested try blocks
 	 */
-	private List<ITypeBinding> thrownExceptionTypes = new ArrayList<>();
+	private Set<ITypeBinding> thrownExceptionTypes = new HashSet<>();
 
 	/**
 	 * Holds the binding of all the caught exception in the catch blocks of this try
 	 */
-	private List<ITypeBinding> catchBlockExceptionTypes = new ArrayList<>();
+	private Set<ITypeBinding> catchBlockExceptionTypes = new HashSet<>();
 
 	private Block body;
 
@@ -61,7 +63,7 @@ public class JTryStatement {
 		}
 	}
 
-	public List<ITypeBinding> getCatchClauseExceptionTypes() {
+	public Set<ITypeBinding> getCatchClauseExceptionTypes() {
 		return catchBlockExceptionTypes;
 	}
 
@@ -162,7 +164,7 @@ public class JTryStatement {
 		return uniqueId;
 	}
 
-	public List<ITypeBinding> getThrownExceptionTypes() {
+	public Set<ITypeBinding> getThrownExceptionTypes() {
 		return thrownExceptionTypes;
 	}
 

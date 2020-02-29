@@ -40,10 +40,15 @@ public class Visitor extends ASTVisitor {
 
 	@Override
 	public boolean visit(TryStatement node) {
+
+		// Ignore try without catch but consider its body
+		if (node.catchClauses() == null || node.catchClauses().size() == 0)
+			return true;
+
 		JTryStatement jTry = new JTryStatement();
-		
-		// DOn't process if no catch clauses?
-		
+
+		// Don't process if no catch clauses?
+
 		jTry.setParentTry(rootTry);
 		jTry.addCatchClauses(node.catchClauses());
 		jTry.setBody(node.getBody());
@@ -75,6 +80,7 @@ public class Visitor extends ASTVisitor {
 
 		for (Type type : thrownFromSignature) {
 			ITypeBinding typeBinding = type.resolveBinding();
+
 			if (typeBinding == null) {
 				System.out.println("Cannot resolve binding for thow :" + type + "in " + node.getName());
 			} else {
