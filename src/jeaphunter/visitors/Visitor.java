@@ -1,6 +1,5 @@
 package jeaphunter.visitors;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,18 +7,15 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.ConstructorInvocation;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.TagElement;
 import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.TryStatement;
 import org.eclipse.jdt.core.dom.Type;
-import org.eclipse.jdt.internal.compiler.ast.ConstructorDeclaration;
 
 import jeaphunter.entities.JTryStatement;
 import jeaphunter.util.ASTUtil;
@@ -99,11 +95,12 @@ public class Visitor extends ASTVisitor {
 
 		return false;
 	}
-
-	@Override
-	public void visit(ConstructorInvocation node) {
-		return false;
-	}
+//
+//	@Override
+//	public boolean visit(ClassInstanceCreation node) {
+//		ITypeBinding binding = node.getType().resolveBinding();
+//		return false;
+//	}
 
 	@Override
 	public boolean visit(ThrowStatement node) {

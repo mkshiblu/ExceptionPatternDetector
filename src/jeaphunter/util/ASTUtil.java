@@ -50,7 +50,7 @@ public class ASTUtil {
 		for (TagElement tag : tags) {
 			String name = tag.getTagName();
 
-			if ("@throws".equals(name)) {
+			if ("@throws".equals(name) || "@exception".equals(name)) {
 				List fragments = tag.fragments();
 
 				if (fragments != null && fragments.size() > 0) {
