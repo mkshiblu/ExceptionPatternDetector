@@ -41,6 +41,10 @@ public class Visitor extends ASTVisitor {
 	@Override
 	public boolean visit(TryStatement node) {
 		JTryStatement jTry = new JTryStatement();
+		
+		// DOn't process if no catch clauses?
+		
+		jTry.setParentTry(rootTry);
 		jTry.addCatchClauses(node.catchClauses());
 		jTry.setBody(node.getBody());
 		jTry.setSoureFilePath(rootTry.getSoureFilePath());

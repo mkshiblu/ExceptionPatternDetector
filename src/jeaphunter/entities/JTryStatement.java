@@ -41,6 +41,7 @@ public class JTryStatement {
 	private int startLineInSource;
 	private int startColumnInSource;
 	private String uniqueId;
+	private JTryStatement parentTry;
 
 	public List<CatchClause> getCatchClauses() {
 		return catchClauses;
@@ -163,5 +164,13 @@ public class JTryStatement {
 
 	public List<ITypeBinding> getThrownExceptionTypes() {
 		return thrownExceptionTypes;
+	}
+
+	public JTryStatement getParentTry() {
+		return parentTry;
+	}
+
+	public void setParentTry(JTryStatement parentTry) {
+		this.parentTry = parentTry;
 	}
 }
