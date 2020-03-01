@@ -40,26 +40,26 @@ public class MethodInvocationVisitor extends ASTVisitor {
 			System.out.println("TryInvocSwitch");
 			System.out.println(TryInvocSwitch);
 			System.out.println("ProcessBinding");
-			processBinding(node,"second_level");				
+			processCheckedException(node,"second_level");				
 		}else if(TryInvocSwitch.equals("second_level")){
 			System.out.println("second_level invoke");
 			System.out.println(TryInvocSwitch);
-			processBinding(node,"third_level");
+			processCheckedException(node,"third_level");
 			
 		}else if(TryInvocSwitch.equals("third_level")) {
 			System.out.println("third_level_invoke");
 			System.out.println(TryInvocSwitch);
-			processBinding(node,"forth_level");
+			processCheckedException(node,"forth_level");
 			
 		}else if(TryInvocSwitch.equals("forth_level")) {
 			System.out.println("forth_level_invoke");
 			System.out.println(TryInvocSwitch);
-			processBinding(node,"fifth_level");
+			processCheckedException(node,"fifth_level");
 			
 		}else if(TryInvocSwitch.equals("fifth_level")) {
 			System.out.println("fifth_level_invoke");
 			System.out.println(TryInvocSwitch);
-			processBinding(node,"six_level");
+			processCheckedException(node,"six_level");
 			
 		}
 		return super.visit(node);
@@ -140,7 +140,7 @@ public class MethodInvocationVisitor extends ASTVisitor {
 		System.out.println(compilationUnits.toString());
 	}
 	
-	public void processBinding(MethodInvocation node,String level) {
+	public void processCheckedException(MethodInvocation node,String level) {
 		List<CompilationUnit> compilationUnitList = new ArrayList<>();
 		IMethodBinding methodBinding=node.resolveMethodBinding();
 		
