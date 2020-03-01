@@ -9,6 +9,8 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.dom.*;
 
@@ -22,6 +24,7 @@ public class JeapHunterHandler extends AbstractHandler {
 
 		// Init plugin workspace console
 		PluginConsole.init();
+		JeapHunter.Console = new PluginConsole();
 
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
@@ -29,13 +32,10 @@ public class JeapHunterHandler extends AbstractHandler {
 		IProject[] projects = root.getProjects();
 
 		detectAntiPatterns(projects);
-
 		return null;
 	}
 
 	public static void detectAntiPatterns(IProject[] projects) {
-		//PluginConsole.writeLine("Hello");
-
 		JeapHunter hunter;
 		for (IProject project : projects) {
 			hunter = new JeapHunter(new JeapHunterProject(project));

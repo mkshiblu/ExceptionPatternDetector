@@ -6,11 +6,13 @@ import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.MessageConsole;
 import org.eclipse.ui.console.MessageConsoleStream;
 
+import jeaphunter.IUserConsole;
+
 /**
  * Console representing the console of the workspace where the plugin is
  * installed
  */
-public class PluginConsole {
+public class PluginConsole implements IUserConsole {
 	private static final String CONSOLE_NAME = "Jeap Hunter";
 	private static MessageConsole messageConsole;
 	private static MessageConsoleStream consoleStream;
@@ -42,7 +44,8 @@ public class PluginConsole {
 	/**
 	 * Prints the message to the plugin's workspace console
 	 */
-	static public void writeLine(String message) {
-		consoleStream.println(message);
+	@Override
+	public void println(Object obj) {
+		consoleStream.println(obj == null ? null : obj.toString());
 	}
 }
