@@ -2,6 +2,7 @@ package jeaphunter.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -69,5 +70,31 @@ public class ASTUtil {
 			}
 		}
 		return thownTypes;
+	}
+
+	// TODO Optimize by caching
+	/**
+	 * Returns the topmost super class that watch matched from the potential super
+	 * types otherwise null
+	 */
+	public static ITypeBinding getTopMostSuperClass(final ITypeBinding typeBinding,
+			final Set<ITypeBinding> potentialSuperTypes) {
+		ITypeBinding currClass = typeBinding;
+		ITypeBinding superClass;
+		ITypeBinding topMostMatchedSuperClass = null;
+
+		while ((superClass = currClass.getSuperclass()) != null) {
+			for (ITypeBinding superType : potentialSuperTypes) {
+				if (superClass.getQualifiedName().equals(superType.getQualifiedName()))
+					topMostMatchedSuperClass = superClass;
+			}
+			currClass = superClass;
+		}
+
+		return topMostMatchedSuperClass;
+	}
+
+	public static boolean isSubclass(final ITypeBinding type, final ITypeBinding potentialSuperType) {
+		return false;
 	}
 }
