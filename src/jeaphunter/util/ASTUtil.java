@@ -94,7 +94,32 @@ public class ASTUtil {
 		return topMostMatchedSuperClass;
 	}
 
-	public static boolean isSubclass(final ITypeBinding type, final ITypeBinding potentialSuperType) {
+	public static boolean isSubClass(final ITypeBinding typeBinding, final Set<ITypeBinding> potentialSuperTypes) {
+		ITypeBinding currClass = typeBinding;
+		ITypeBinding superClass;
+
+		while ((superClass = currClass.getSuperclass()) != null) {
+			for (ITypeBinding superType : potentialSuperTypes) {
+				if (superClass.getQualifiedName().equals(superType.getQualifiedName()))
+					return true;
+			}
+			currClass = superClass;
+		}
+
+		return false;
+	}
+
+	public static boolean isSubClass(final ITypeBinding typeBinding, final ITypeBinding potentialSuperType) {
+		ITypeBinding currClass = typeBinding;
+		ITypeBinding superClass;
+
+		while ((superClass = currClass.getSuperclass()) != null) {
+			if (superClass.getQualifiedName().equals(potentialSuperType.getQualifiedName()))
+				return true;
+
+			currClass = superClass;
+		}
+
 		return false;
 	}
 }

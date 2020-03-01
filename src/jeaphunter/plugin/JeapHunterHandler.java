@@ -24,6 +24,7 @@ public class JeapHunterHandler extends AbstractHandler {
 
 		// Init plugin workspace console
 		PluginConsole.init();
+		JeapHunter.Console = new PluginConsole();
 
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
@@ -31,25 +32,10 @@ public class JeapHunterHandler extends AbstractHandler {
 		IProject[] projects = root.getProjects();
 
 		detectAntiPatterns(projects);
-
-//		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-//	    if (window != null)
-//	    {
-//	        IStructuredSelection selection = (IStructuredSelection) window.getSelectionService().getSelection();
-//	        Object firstElement = selection.getFirstElement();
-//	        if (firstElement instanceof IAdaptable)
-//	        {
-//	            IProject project = (IProject)((IAdaptable)firstElement).getAdapter(IProject.class);
-//	            IPath path = project.getFullPath();
-//	            System.out.println(path);
-//	        }
-//	    }
 		return null;
 	}
 
 	public static void detectAntiPatterns(IProject[] projects) {
-		//PluginConsole.writeLine("Hello");
-
 		JeapHunter hunter;
 		for (IProject project : projects) {
 			hunter = new JeapHunter(new JeapHunterProject(project));

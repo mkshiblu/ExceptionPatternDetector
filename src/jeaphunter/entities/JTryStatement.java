@@ -32,6 +32,13 @@ public class JTryStatement {
 	 */
 	private Set<ITypeBinding> thrownExceptionTypes = new HashSet<>();
 
+
+
+	/**
+	 * Holds the unhandled exception propagated from inner try
+	 */
+	private Set<ITypeBinding> propagatedExceptionsFromNestedTryStatemetns = new HashSet<>();
+	
 	/**
 	 * Holds the binding of all the caught exception in the catch blocks of this try
 	 */
@@ -99,7 +106,7 @@ public class JTryStatement {
 		this.nestedTryStatements.add(nestedTryStatement);
 	}
 
-	public List<JTryStatement> geteNestedTryStatements() {
+	public List<JTryStatement> getNestedTryStatements() {
 		return nestedTryStatements;
 	}
 
@@ -174,5 +181,13 @@ public class JTryStatement {
 
 	public void setParentTry(JTryStatement parentTry) {
 		this.parentTry = parentTry;
+	}
+
+	public Set<ITypeBinding> getPropagatedExceptionsFromNestedTryStatemetns() {
+		return propagatedExceptionsFromNestedTryStatemetns;
+	}
+
+	public void addToPropagatedThrowsFromNestedTry(Set<ITypeBinding> thrownFromInnerTry) {
+		this.propagatedExceptionsFromNestedTryStatemetns.addAll(thrownFromInnerTry);
 	}
 }
