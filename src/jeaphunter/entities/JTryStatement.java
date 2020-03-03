@@ -10,6 +10,7 @@ import org.eclipse.jdt.core.dom.CatchClause;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.ThrowStatement;
+import org.eclipse.jdt.core.dom.TryStatement;
 
 /**
  * An abstraction over Ast try statement
@@ -32,13 +33,11 @@ public class JTryStatement {
 	 */
 	private Set<ITypeBinding> thrownExceptionTypes = new HashSet<>();
 
-
-
 	/**
 	 * Holds the unhandled exception propagated from inner try
 	 */
 	private Set<ITypeBinding> propagatedExceptionsFromNestedTryStatemetns = new HashSet<>();
-	
+
 	/**
 	 * Holds the binding of all the caught exception in the catch blocks of this try
 	 */
@@ -51,6 +50,33 @@ public class JTryStatement {
 	private int startColumnInSource;
 	private String uniqueId;
 	private JTryStatement parentTry;
+	private TryStatement tryStatement;
+
+	public JTryStatement(TryStatement tryStatement) {
+		this.tryStatement = tryStatement;
+	}
+
+	public boolean equals(JTryStatement jtry) {
+		//return this.getTryStatement().equals(jtry.getTryStatement());
+		return this.hashCode() == jtry.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof JTryStatement) {
+			return this.equals(((JTryStatement) obj));
+		}
+		return super.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return getUniqueId().hashCode();//toString().get //this.getTryStatement()..hashCode();
+	}
+
+	public TryStatement getTryStatement() {
+		return tryStatement;
+	}
 
 	public List<CatchClause> getCatchClauses() {
 		return catchClauses;
@@ -162,7 +188,7 @@ public class JTryStatement {
 
 		if (uniqueId == null) {
 			if (sourceFilePath == null) {
-				throw new UnsupportedOperationException("SourceFile Path cannot be null to generate Unique ID");
+				System.out.println("SourceFile Path cannot be null to generate Unique ID");
 			}
 
 			uniqueId = sourceFilePath + "_" + startLineInSource + "_" + startColumnInSource;

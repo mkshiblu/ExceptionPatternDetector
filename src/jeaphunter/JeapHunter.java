@@ -41,14 +41,11 @@ public class JeapHunter {
 			sourceFiles = project.getSourceFiles();
 			for (SourceFile sourceFile : sourceFiles) {
 				projectNestedTryStatements.addAll(detectNestedTry(sourceFile));
-				// detectDestructiveWrapping(sourceFile);
+				detectDestructiveWrapping(sourceFile);
 				tryWithOverCatch.addAll(detectOverCatch(sourceFile));
 			}
 
 			printNestedTryResults();
-
-			// TODO: do destructive wrapping
-
 			Console.println("---------------OVER_CATCHES--------------");
 			tryWithOverCatch.forEach(jTry -> Console.println(jTry));
 

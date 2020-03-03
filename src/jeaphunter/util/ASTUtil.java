@@ -1,7 +1,10 @@
 package jeaphunter.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -18,6 +21,8 @@ import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.TagElement;
 
 public class ASTUtil {
+
+	private static Map<ITypeBinding, Set<ITypeBinding>> typeSuperClasses = new HashMap<>();
 
 	/** this only works when the method is declared in an Eclipse project **/
 	public static MethodDeclaration declarationFromInvocation(MethodInvocation node) {
@@ -109,17 +114,41 @@ public class ASTUtil {
 		return false;
 	}
 
+	/**
+	 * Returns true if the type binding is the subclass of the potential supertype
+	 */
 	public static boolean isSubClass(final ITypeBinding typeBinding, final ITypeBinding potentialSuperType) {
-		ITypeBinding currClass = typeBinding;
+		// Get the already calculated super types
+		Set<ITypeBinding> superTypes = typeSuperClasses.get(typeBinding);
+		if (superTypes != null && superTypes.contains(potentialSuperType)) {
+			return true;
+		}
+
 		ITypeBinding superClass;
+		ITypeBinding currClass = typeBinding;
 
 		while ((superClass = currClass.getSuperclass()) != null) {
-			if (superClass.getQualifiedName().equals(potentialSuperType.getQualifiedName()))
-				return true;
+			if (superClass.getQualifiedName().equals(potentialSuperType.getQualifiedName())) {
 
+				// Add to the cache
+				if (superTypes == null) {
+					superTypes = new HashSet<>();
+					typeSuperClasses.put(typeBinding, superTypes);
+				}
+				superTypes.add(potentialSuperType);
+
+				return true;
+			}
 			currClass = superClass;
 		}
 
 		return false;
+	}
+
+	/**
+	 * Clears the calculated hierarchy cache
+	 */
+	public static void clearCache() {
+		typeSuperClasses.clear();
 	}
 }

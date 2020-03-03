@@ -54,7 +54,7 @@ public class TryVisitor extends ASTVisitor {
 		if (mustHaveCatchClause && (node.catchClauses() == null || node.catchClauses().size() == 0))
 			return true;
 
-		JTryStatement jTry = new JTryStatement();
+		JTryStatement jTry = new JTryStatement(node);
 		jTry.addCatchClauses(node.catchClauses());
 		jTry.setBody(node.getBody());
 		jTry.setSoureFilePath(filePath);
