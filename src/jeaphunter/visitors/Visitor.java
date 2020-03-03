@@ -45,7 +45,7 @@ public class Visitor extends ASTVisitor {
 		if (node.catchClauses() == null || node.catchClauses().size() == 0)
 			return true;
 
-		JTryStatement jTry = new JTryStatement();
+		JTryStatement jTry = new JTryStatement(node);
 
 		// Don't process if no catch clauses?
 

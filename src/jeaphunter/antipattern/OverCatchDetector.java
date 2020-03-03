@@ -30,6 +30,9 @@ public class OverCatchDetector {
 
 	private void detectOverCatch(JTryStatement jTry) {
 
+		if (tryWithOverCatch.contains(jTry))
+			return;
+
 		for (JTryStatement innerTry : jTry.getNestedTryStatements()) {
 			detectOverCatch(innerTry);
 
@@ -37,24 +40,26 @@ public class OverCatchDetector {
 			jTry.addToPropagatedThrowsFromNestedTry(innerUnhandled);
 		}
 
-		if (hasOverCatch(jTry)) {
+		if (!tryWithOverCatch.contains(jTry) && hasOverCatch(jTry)) {
 			tryWithOverCatch.add(jTry);
 		}
 	}
 
+	/**
+	 * Returns all the unhandled exceptions by this try
+	 */
 	private Set<ITypeBinding> getUnhandledExceptions(final JTryStatement jtry) {
-		Set<ITypeBinding> unhandled = new HashSet<>();
-
-		final Set<ITypeBinding> thrownTopLevelTypes = getTopMostClasses(jtry.getThrownExceptionTypes());
-		final Set<ITypeBinding> catchTopLevelTypes = getTopMostClasses(jtry.getCatchClauseExceptionTypes());
+		final Set<ITypeBinding> unhandled = new HashSet<>();
+		final Set<ITypeBinding> thrownExceptions = jtry.getThrownExceptionTypes();
+		final Set<ITypeBinding> catchExceptions = jtry.getCatchClauseExceptionTypes();
 
 		boolean handledInCatch;
 
-		for (ITypeBinding thrownException : thrownTopLevelTypes) {
+		for (ITypeBinding thrownException : thrownExceptions) {
 			handledInCatch = false;
 
 			// Check if the throwed exception was handled by the catch
-			for (ITypeBinding catchException : catchTopLevelTypes) {
+			for (ITypeBinding catchException : catchExceptions) {
 				if (thrownException.isEqualTo(catchException) || ASTUtil.isSubClass(thrownException, catchException)) {
 					handledInCatch = true;
 					break;

@@ -15,6 +15,7 @@ import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.dom.*;
 
 import jeaphunter.JeapHunterProject;
+import jeaphunter.util.ASTUtil;
 import jeaphunter.JeapHunter;
 
 public class JeapHunterHandler extends AbstractHandler {
@@ -25,7 +26,8 @@ public class JeapHunterHandler extends AbstractHandler {
 		// Init plugin workspace console
 		PluginConsole.init();
 		JeapHunter.Console = new PluginConsole();
-
+		ASTUtil.clearCache();
+		
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 
