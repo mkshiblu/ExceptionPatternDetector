@@ -12,6 +12,8 @@ import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.TryStatement;
 
+import jeaphunter.antipattern.OverCatchAntiPattern;
+
 /**
  * An abstraction over Ast try statement
  */
@@ -20,7 +22,7 @@ public class JTryStatement {
 	private List<CatchClause> catchClauses = new ArrayList<>();
 	private List<MethodInvocation> invokedMethods = new ArrayList<>();
 	private List<ThrowStatement> throwedStatements = new ArrayList<>();
-
+	
 	/**
 	 * Directly or deeply nested (i.e. inside a method which is invoked from this
 	 * try) try blocks
@@ -43,6 +45,8 @@ public class JTryStatement {
 	 */
 	private Set<ITypeBinding> catchBlockExceptionTypes = new HashSet<>();
 
+	public Set<OverCatchAntiPattern> overcatch = new HashSet<>();
+	
 	private Block body;
 
 	private String sourceFilePath;

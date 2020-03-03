@@ -130,12 +130,12 @@ public class ASTUtil {
 		while ((superClass = currClass.getSuperclass()) != null) {
 			if (superClass.getQualifiedName().equals(potentialSuperType.getQualifiedName())) {
 
-				// Add to the cache
-				if (superTypes == null) {
-					superTypes = new HashSet<>();
-					typeSuperClasses.put(typeBinding, superTypes);
-				}
-				superTypes.add(potentialSuperType);
+//				// Add to the cache
+//				if (superTypes == null) {
+//					superTypes = new HashSet<>();
+//					typeSuperClasses.put(typeBinding, superTypes);
+//				}
+//				superTypes.add(potentialSuperType);
 
 				return true;
 			}
