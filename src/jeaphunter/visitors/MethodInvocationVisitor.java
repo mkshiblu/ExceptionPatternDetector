@@ -5,9 +5,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
@@ -16,6 +18,8 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.internal.corext.callhierarchy.CallHierarchy;
+import org.eclipse.jdt.internal.corext.callhierarchy.MethodWrapper;
 
 public class MethodInvocationVisitor extends ASTVisitor {
 	private static String[] LogMethods = {"log", "info", "warn", "error", "trace", "debug", "fatal"}; // "log statement"
@@ -40,7 +44,33 @@ public class MethodInvocationVisitor extends ASTVisitor {
 			System.out.println("TryInvocSwitch");
 			System.out.println(TryInvocSwitch);
 			System.out.println("ProcessBinding");
-			processCheckedException(node,"second_level");				
+			processCheckedException(node,"second_level");		
+			
+			
+//			Process unchecked Exception
+			CallHierarchy callHierarchy = CallHierarchy.getDefault();
+			IMember[] members= {method};
+			MethodWrapper[] methodWrappers=callHierarchy.getCalleeRoots(members);
+			HashSet<IMethod> callees= new HashSet<IMethod>();
+			for(MethodWrapper mw: methodWrappers) {
+				MethodWrapper[] mw2=mw.getCalls(new NullProgressMonitor());
+				HashSet<IMethod> temp.getIMethods(mw2);
+				callees.addAll(temp);
+				
+			}
+			
+			HashSet<IMethod> getIMethods(MethodWrapper[] methodWrappers){
+				
+			}
+			
+			
+			                                                                                                                                                   
+			
+			
+			
+			
+			
+			
 		}else if(TryInvocSwitch.equals("second_level")){
 			System.out.println("second_level invoke");
 			System.out.println(TryInvocSwitch);
