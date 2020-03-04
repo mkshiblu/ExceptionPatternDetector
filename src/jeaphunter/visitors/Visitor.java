@@ -22,7 +22,7 @@ import jeaphunter.util.ASTUtil;
 
 public class Visitor extends ASTVisitor {
 
-	public static final int MAX_DEPTH_OF_SEARCHING_INSIDE_METHOD_INVOCATIONS = 100;
+	public static final int MAX_DEPTH_OF_SEARCHING_INSIDE_METHOD_INVOCATIONS = 5;
 
 	private List<JTryStatement> jTryStatements = new ArrayList<>();
 	private int methodInvocationDepth = 1;
