@@ -22,7 +22,7 @@ import jeaphunter.util.ASTUtil;
 
 public class Visitor extends ASTVisitor {
 
-	public static final int MAX_DEPTH_OF_SEARCHING_INSIDE_METHOD_INVOCATIONS = 5;
+	public static final int MAX_DEPTH_OF_SEARCHING_INSIDE_METHOD_INVOCATIONS = 100;
 
 	private List<JTryStatement> jTryStatements = new ArrayList<>();
 	private int methodInvocationDepth = 1;
@@ -76,33 +76,35 @@ public class Visitor extends ASTVisitor {
 	public boolean visit(MethodInvocation node) {
 		rootTry.addToInvokedMethods(node);
 		MethodDeclaration declartion = ASTUtil.declarationFromInvocation(node);
-		List<Type> thrownFromSignature = declartion.thrownExceptionTypes();
 
-		for (Type type : thrownFromSignature) {
-			ITypeBinding typeBinding = type.resolveBinding();
+		if (declartion != null) {
+			List<Type> thrownFromSignature = declartion.thrownExceptionTypes();
 
-			if (typeBinding == null) {
-				System.out.println("Cannot resolve binding for thow :" + type + "in " + node.getName());
-			} else {
-				rootTry.addToThrownExceptionTypes(typeBinding);
+			for (Type type : thrownFromSignature) {
+				ITypeBinding typeBinding = type.resolveBinding();
+
+				if (typeBinding == null) {
+					System.out.println("Cannot resolve binding for thow :" + type + "in " + node.getName());
+				} else {
+					rootTry.addToThrownExceptionTypes(typeBinding);
+				}
 			}
-		}
 
-		// TODO Check thrown from declaration javadoc if any throws
-		Javadoc javadoc = declartion.getJavadoc();
-		if (javadoc != null) {
-			List<ITypeBinding> thrownTypes = ASTUtil.getThrowableExceptionsFromJavadoc(javadoc);
-			for (ITypeBinding typeBinding : thrownTypes) {
-				rootTry.addToThrownExceptionTypes(typeBinding);
+			// TODO Check thrown from declaration javadoc if any throws
+			Javadoc javadoc = declartion.getJavadoc();
+			if (javadoc != null) {
+				List<ITypeBinding> thrownTypes = ASTUtil.getThrowableExceptionsFromJavadoc(javadoc);
+				for (ITypeBinding typeBinding : thrownTypes) {
+					rootTry.addToThrownExceptionTypes(typeBinding);
+				}
 			}
+
+			if (methodInvocationDepth == MAX_DEPTH_OF_SEARCHING_INSIDE_METHOD_INVOCATIONS)
+				return false;
+
+			Visitor visitor = new Visitor(rootTry, methodInvocationDepth + 1);
+			declartion.accept(visitor);
 		}
-
-		if (methodInvocationDepth == MAX_DEPTH_OF_SEARCHING_INSIDE_METHOD_INVOCATIONS)
-			return false;
-
-		Visitor visitor = new Visitor(rootTry, methodInvocationDepth + 1);
-		declartion.accept(visitor);
-
 		return false;
 	}
 //

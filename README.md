@@ -64,8 +64,9 @@ foo () {
 
 ````
 
+- **OVerCatch:** The handler catches multiple different lower-level exceptions
 - foo() does not throw any IOException or their subclasses, So there is no need to catch the IOException. Therefore it's an overcatch.
-
+- 
 - Ideally we need to check the source code or signature inside foo() has thrown any exception that are subclasses of the same class of the handled exception
 - The methods invoked inside foo() can also throw this exceptions. so we need to check that also.
 - This could lead to many deep level checking. For this tool, we can put a thehsold of 4-5 levels,
