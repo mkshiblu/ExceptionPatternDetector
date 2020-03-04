@@ -1,11 +1,15 @@
 package jeaphunter.antipattern;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.omg.CORBA.Environment;
 
 import jeaphunter.entities.JTryStatement;
 import jeaphunter.util.ASTUtil;
@@ -75,41 +79,55 @@ public class OverCatchDetector {
 	}
 
 	private boolean hasOverCatch(final JTryStatement jtry) {
-		final Set<ITypeBinding> catchExceptions = jtry.getCatchClauseExceptionTypes();
+		boolean hasOverCatch = false;
+
+		final List<ITypeBinding> sortedCatchExceptions = jtry.getCatchClauseExceptionTypes().stream()
+				.sorted(new Comparator<ITypeBinding>() {
+					@Override
+					public int compare(ITypeBinding c1, ITypeBinding c2) {
+						if (ASTUtil.isSubClass(c1, c2))
+							return -1;
+
+						if (ASTUtil.isSubClass(c2, c1))
+							return 1;
+
+						return 0;
+					}
+				}).collect(Collectors.toList());
 
 		final Set<ITypeBinding> thrownExceptions = new HashSet<ITypeBinding>();
 		thrownExceptions.addAll(jtry.getThrownExceptionTypes());
 		thrownExceptions.addAll(jtry.getPropagatedExceptionsFromNestedTryStatemetns());
 
-		//final Set<ITypeBinding> matchedExceptions = new HashSet<>();
+		Set<ITypeBinding> caughtSubExceptions;
+		final StringBuilder subExceptionNames = new StringBuilder(); // For printing
 
-		for (ITypeBinding catchException : catchExceptions) {
-			for (ITypeBinding thrownException : thrownExceptions) {
+		for (final ITypeBinding catchException : sortedCatchExceptions) {
+			subExceptionNames.setLength(0);
+			// Find the sub exceptions caught by this catch
+			caughtSubExceptions = ASTUtil.getMatchedSubClasses(catchException, thrownExceptions);
 
-				// Skip if already matched
-//				if (matchedExceptions.contains(thrownException)) {
-//					continue;
-//				}
+			if (caughtSubExceptions.size() > 0) {
+				// It's an overcatch
+				hasOverCatch = true;
 
-				if (catchException.isEqualTo(thrownException)) {
-					// Exception is handled directly not only with subclasses therefore not an
-					// overcatch
-					//matchedExceptions.add(thrownException);
-					thrownExceptions.remove(thrownException);
-					break;
+				for (final ITypeBinding caughtSubException : caughtSubExceptions) {
+					subExceptionNames.append(caughtSubException.getName());
+					subExceptionNames.append(", ");
 				}
+				// Add it to the list of overcatch
+				jtry.addToOverCatches(new OverCatchAntiPattern(catchException,
+						catchException.getName() + " is catching " + subExceptionNames.toString()));
+			}
 
-				if (ASTUtil.isSubClass(thrownException, catchException)) {
-
-					jtry.addToOverCatches(new OverCatchAntiPattern(catchException,
-							catchException.getName() + " is catching " + thrownException.getName()));
-					// this is an overcatch
-					return true;
-				}
+			// Remove the matched exceptions from the throw
+			thrownExceptions.removeAll(caughtSubExceptions);
+			if (thrownExceptions.contains(catchException)) {
+				thrownExceptions.remove(catchException);
 			}
 		}
 
-		return false;
+		return hasOverCatch;
 	}
 
 	private Set<ITypeBinding> getTopMostClasses(final Set<ITypeBinding> thrownExceptions) {
