@@ -6,11 +6,13 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.dom.CatchClause;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.TryStatement;
 
 import jeaphunter.antipattern.OverCatchDetector;
 import jeaphunter.entities.JTryStatement;
+import jeaphunter.visitors.CatchVisitor;
 import jeaphunter.visitors.TryStatementVisitor;
 import jeaphunter.visitors.TryVisitor;
 
@@ -71,8 +73,11 @@ public class JeapHunter {
 		return compilationUnitNestedTryStatements;
 	}
 
-	public void detectDestructiveWrapping(SourceFile sourceFile) {
-
+	public HashSet<CatchClause> detectDestructiveWrapping(SourceFile sourceFile) {
+		CatchVisitor catchVisitor = new CatchVisitor();
+		CompilationUnit compilationUnit = sourceFile.getCompilationUnit();
+		compilationUnit.accept(catchVisitor);
+		return new HashSet<>(catchVisitor.getDestructiveWrapping());
 	}
 
 	/**
