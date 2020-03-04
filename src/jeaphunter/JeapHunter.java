@@ -39,10 +39,11 @@ public class JeapHunter {
 		try {
 			HashSet<TryStatement> projectNestedTryStatements = new HashSet<TryStatement>();
 			List<JTryStatement> tryWithOverCatch = new ArrayList<JTryStatement>();
+			HashSet<CatchClause> destructiveWrappingResult = new HashSet<>();
 			sourceFiles = project.getSourceFiles();
 			for (SourceFile sourceFile : sourceFiles) {
 				projectNestedTryStatements.addAll(detectNestedTry(sourceFile));
-				detectDestructiveWrapping(sourceFile);
+				destructiveWrappingResult.addAll(detectDestructiveWrapping(sourceFile));
 				tryWithOverCatch.addAll(detectOverCatch(sourceFile));
 			}
 
