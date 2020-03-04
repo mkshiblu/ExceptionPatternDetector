@@ -1,16 +1,17 @@
 package jeaphunter;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.dom.CatchClause;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.TryStatement;
 
 import jeaphunter.antipattern.OverCatchDetector;
 import jeaphunter.entities.JTryStatement;
+import jeaphunter.visitors.CatchVisitor;
 import jeaphunter.visitors.TryStatementVisitor;
 import jeaphunter.visitors.TryVisitor;
 
@@ -46,8 +47,7 @@ public class JeapHunter {
 			}
 
 			printNestedTryResults();
-			Console.println("---------------OVER_CATCHES--------------");
-			tryWithOverCatch.forEach(jTry -> Console.println(jTry));
+			printOverCatchResult();
 
 		} catch (JavaModelException e) {
 			e.printStackTrace();
@@ -71,12 +71,16 @@ public class JeapHunter {
 		return compilationUnitNestedTryStatements;
 	}
 
-	public void detectDestructiveWrapping(SourceFile sourceFile) {
-
+	public HashSet<CatchClause> detectDestructiveWrapping(SourceFile sourceFile) {
+		CatchVisitor catchVisitor = new CatchVisitor();
+		CompilationUnit compilationUnit = sourceFile.getCompilationUnit();
+		compilationUnit.accept(catchVisitor);
+		return new HashSet<>(catchVisitor.getDestructiveWrapping());
 	}
 
 	/**
-	 * Detect patterns when catch is given but there is no throw for that catch.
+	 * Detect patterns when catch is given but there is a sub class throw for that
+	 * catch.
 	 * 
 	 * @param compilationUnit
 	 */
@@ -100,6 +104,15 @@ public class JeapHunter {
 			Console.println(compilationUnit.getTypeRoot().getJavaProject().getProject().getName() + " project: ");
 			Console.println(compilationUnit.getTypeRoot().getElementName() + " at Line:" + lineNumber + "\n");
 			Console.println(nestedTryStatement.toString() + "\n");
+		}
+	}
+
+	private void printOverCatchResult() {
+		Console.println("---------------OVER_CATCHES--------------");
+		for (JTryStatement overCatchTry : tryWithOverCatch) {
+			
+			Console.println(overCatchTry);
+			overCatchTry.getOverCatches().forEach(overCatch -> Console.println(overCatch.getReason()));
 		}
 	}
 }
