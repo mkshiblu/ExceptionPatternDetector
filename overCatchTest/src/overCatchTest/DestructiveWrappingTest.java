@@ -34,4 +34,13 @@ public class DestructiveWrappingTest {
 		}
 	}
 
+	
+	public void D() {
+		try {
+		
+		}catch(FileNotFoundException e){
+			throw new FileNotFoundException("anther New"+ e.getMessage())
+		}
+		
+	}
 }
