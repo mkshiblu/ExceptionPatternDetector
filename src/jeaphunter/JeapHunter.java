@@ -1,6 +1,5 @@
 package jeaphunter;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -48,8 +47,7 @@ public class JeapHunter {
 			}
 
 			printNestedTryResults();
-			Console.println("---------------OVER_CATCHES--------------");
-			tryWithOverCatch.forEach(jTry -> Console.println(jTry));
+			printOverCatchResult();
 
 		} catch (JavaModelException e) {
 			e.printStackTrace();
@@ -81,7 +79,8 @@ public class JeapHunter {
 	}
 
 	/**
-	 * Detect patterns when catch is given but there is no throw for that catch.
+	 * Detect patterns when catch is given but there is a sub class throw for that
+	 * catch.
 	 * 
 	 * @param compilationUnit
 	 */
@@ -105,6 +104,15 @@ public class JeapHunter {
 			Console.println(compilationUnit.getTypeRoot().getJavaProject().getProject().getName() + " project: ");
 			Console.println(compilationUnit.getTypeRoot().getElementName() + " at Line:" + lineNumber + "\n");
 			Console.println(nestedTryStatement.toString() + "\n");
+		}
+	}
+
+	private void printOverCatchResult() {
+		Console.println("---------------OVER_CATCHES--------------");
+		for (JTryStatement overCatchTry : tryWithOverCatch) {
+			
+			Console.println(overCatchTry);
+			overCatchTry.getOverCatches().forEach(overCatch -> Console.println(overCatch.getReason()));
 		}
 	}
 }

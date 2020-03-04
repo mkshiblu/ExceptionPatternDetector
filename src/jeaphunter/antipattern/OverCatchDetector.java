@@ -77,20 +77,32 @@ public class OverCatchDetector {
 	private boolean hasOverCatch(final JTryStatement jtry) {
 		final Set<ITypeBinding> catchExceptions = jtry.getCatchClauseExceptionTypes();
 
-		final Set<ITypeBinding> thrownExceptions = jtry.getThrownExceptionTypes();
+		final Set<ITypeBinding> thrownExceptions = new HashSet<ITypeBinding>();
+		thrownExceptions.addAll(jtry.getThrownExceptionTypes());
 		thrownExceptions.addAll(jtry.getPropagatedExceptionsFromNestedTryStatemetns());
+
+		//final Set<ITypeBinding> matchedExceptions = new HashSet<>();
 
 		for (ITypeBinding catchException : catchExceptions) {
 			for (ITypeBinding thrownException : thrownExceptions) {
 
+				// Skip if already matched
+//				if (matchedExceptions.contains(thrownException)) {
+//					continue;
+//				}
+
 				if (catchException.isEqualTo(thrownException)) {
 					// Exception is handled directly not only with subclasses therefore not an
 					// overcatch
+					//matchedExceptions.add(thrownException);
+					thrownExceptions.remove(thrownException);
 					break;
 				}
 
 				if (ASTUtil.isSubClass(thrownException, catchException)) {
 
+					jtry.addToOverCatches(new OverCatchAntiPattern(catchException,
+							catchException.getName() + " is catching " + thrownException.getName()));
 					// this is an overcatch
 					return true;
 				}

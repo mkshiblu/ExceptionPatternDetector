@@ -19,33 +19,34 @@ import jeaphunter.antipattern.OverCatchAntiPattern;
  */
 public class JTryStatement {
 
-	private List<CatchClause> catchClauses = new ArrayList<>();
-	private List<MethodInvocation> invokedMethods = new ArrayList<>();
-	private List<ThrowStatement> throwedStatements = new ArrayList<>();
+	private final List<CatchClause> catchClauses = new ArrayList<>();
+	private final List<MethodInvocation> invokedMethods = new ArrayList<>();
+	private final List<ThrowStatement> throwedStatements = new ArrayList<>();
 	
 	/**
 	 * Directly or deeply nested (i.e. inside a method which is invoked from this
 	 * try) try blocks
 	 */
-	private List<JTryStatement> nestedTryStatements = new ArrayList<>();
+	private final List<JTryStatement> nestedTryStatements = new ArrayList<>();
 
 	/**
 	 * Holds all the throw statement exceptions excluding the ones not inside of
 	 * nested try blocks
 	 */
-	private Set<ITypeBinding> thrownExceptionTypes = new HashSet<>();
+	private final Set<ITypeBinding> thrownExceptionTypes = new HashSet<>();
 
 	/**
 	 * Holds the unhandled exception propagated from inner try
 	 */
-	private Set<ITypeBinding> propagatedExceptionsFromNestedTryStatemetns = new HashSet<>();
+	private final Set<ITypeBinding> propagatedExceptionsFromNestedTryStatemetns = new HashSet<>();
 
 	/**
 	 * Holds the binding of all the caught exception in the catch blocks of this try
 	 */
-	private Set<ITypeBinding> catchBlockExceptionTypes = new HashSet<>();
+	private final Set<ITypeBinding> catchBlockExceptionTypes = new HashSet<>();
 
-	public Set<OverCatchAntiPattern> overcatch = new HashSet<>();
+	private final Set<OverCatchAntiPattern> overCatches = new HashSet<>();
+
 	
 	private Block body;
 
@@ -219,5 +220,17 @@ public class JTryStatement {
 
 	public void addToPropagatedThrowsFromNestedTry(Set<ITypeBinding> thrownFromInnerTry) {
 		this.propagatedExceptionsFromNestedTryStatemetns.addAll(thrownFromInnerTry);
+	}
+	
+	public Set<OverCatchAntiPattern> getOverCatches(){
+		return overCatches;
+	}
+	
+	public void addToOverCatches(OverCatchAntiPattern oca) {
+		this.overCatches.add(oca);
+	}
+	
+	public boolean hasOverCatches() {
+		return overCatches.size() > 0;
 	}
 }
