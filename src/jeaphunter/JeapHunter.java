@@ -112,13 +112,20 @@ public class JeapHunter {
 	private void printOverCatchResult(List<JTryStatement> tryWithOverCatch) {
 		Console.println("---------------OVER_CATCHES--------------");
 		for (JTryStatement overCatchTry : tryWithOverCatch) {
-
 			Console.println(overCatchTry);
 			overCatchTry.getOverCatches().forEach(overCatch -> Console.println(overCatch.getReason()));
 		}
 	}
-	
+
 	private void printDestructiveWrapping(HashSet<CatchClause> destructiveWrappingResult) {
-		
+	
+	}
+
+	private String printCompilationUnit(CompilationUnit compilationUnit, int startPosition) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(compilationUnit.getTypeRoot().getJavaProject().getProject().getName()).append(" project: ");
+		sb.append(compilationUnit.getTypeRoot().getElementName()).append( " at Line:")
+		.append( compilationUnit.getLineNumber(startPosition)).append(System.lineSeparator());
+		return sb.toString();
 	}
 }
