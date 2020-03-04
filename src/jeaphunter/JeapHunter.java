@@ -47,6 +47,11 @@ public class JeapHunter {
 				tryWithOverCatch.addAll(detectOverCatch(sourceFile));
 			}
 
+			Console.println("---------------Summary--------------");
+			Console.println("Number of Nested Try: " + projectNestedTryStatements.size());
+			Console.println("Number of Destructive Wrapping: " + destructiveWrappingResult.size());
+			Console.println("Number of Over Catch: " + tryWithOverCatch.size());
+
 			printNestedTryResults(projectNestedTryStatements);
 			printDestructiveWrapping(destructiveWrappingResult);
 			printOverCatchResult(tryWithOverCatch);
@@ -98,42 +103,42 @@ public class JeapHunter {
 	}
 
 	private void printNestedTryResults(HashSet<TryStatement> projectNestedTryStatements) {
-		Console.println("NESTED TRY RESULTS(" + projectNestedTryStatements.size() + " items):\n");
-
+		Console.println("---------------NESTED TRY--------------");
 		for (TryStatement nestedTryStatement : projectNestedTryStatements) {
-			CompilationUnit compilationUnit = (CompilationUnit) nestedTryStatement.getRoot();
-			int lineNumber = compilationUnit.getLineNumber(nestedTryStatement.getStartPosition());
-			Console.println(compilationUnit.getTypeRoot().getJavaProject().getProject().getName() + " project: ");
-			Console.println(compilationUnit.getTypeRoot().getElementName() + " at Line:" + lineNumber + "\n");
-			Console.println(nestedTryStatement.toString() + "\n");
+			Console.println(mapCompilationUnitToString((CompilationUnit) nestedTryStatement.getRoot(),
+					nestedTryStatement.getStartPosition()));
+			// Console.println(nestedTryStatement.toString() + "\n");
 		}
 	}
 
 	private void printOverCatchResult(List<JTryStatement> tryWithOverCatch) {
-		Console.println("---------------OVER_CATCHES--------------");
+		Console.println("---------------OVER CATCH--------------");
 		for (JTryStatement overCatchTry : tryWithOverCatch) {
-			Console.println(overCatchTry);
+			Console.println(mapCompilationUnitToString((CompilationUnit) overCatchTry.getTryStatement().getRoot(),
+					overCatchTry.getTryStatement().getStartPosition()));
 			overCatchTry.getOverCatches().forEach(overCatch -> Console.println(overCatch.getReason()));
 		}
 	}
 
 	private void printDestructiveWrapping(HashSet<CatchClause> destructiveWrappingResult) {
-
+		Console.println("---------------DESTRUCTIVE WRAPPING--------------");
+		destructiveWrappingResult.stream().map(this::mapCatchClauseToString).forEach(Console::println);
 	}
 
-	private String mapCompilationUnitTo(CompilationUnit compilationUnit, int startPosition) {
+	private String mapCompilationUnitToString(CompilationUnit compilationUnit, int startPosition) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(compilationUnit.getTypeRoot().getJavaProject().getProject().getName()).append(" project: ");
-		sb.append(compilationUnit.getTypeRoot().getElementName()).append(" at Line:")
-				.append(compilationUnit.getLineNumber(startPosition));
+		sb.append(compilationUnit.getTypeRoot().getElementName()).append(" at Line:");
+		sb.append(compilationUnit.getLineNumber(startPosition)).append(" col: ");
+		sb.append(compilationUnit.getColumnNumber(startPosition));
 		return sb.toString();
 	}
 
 	private String mapCatchClauseToString(CatchClause catchClause) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(mapCompilationUnitTo((CompilationUnit) catchClause.getRoot(), catchClause.getStartPosition()));
+		sb.append(mapCompilationUnitToString((CompilationUnit) catchClause.getRoot(), catchClause.getStartPosition()));
 		sb.append(System.lineSeparator());
-		sb.append(catchClause.toString());
+		// sb.append(catchClause.toString());
 		return sb.toString();
 	}
 }
