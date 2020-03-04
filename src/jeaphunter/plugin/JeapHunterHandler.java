@@ -33,7 +33,14 @@ public class JeapHunterHandler extends AbstractHandler {
 
 		IProject[] projects = root.getProjects();
 
-		detectAntiPatterns(projects);
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				detectAntiPatterns(projects);
+			}
+			
+		}).start();
+		
 		return null;
 	}
 
