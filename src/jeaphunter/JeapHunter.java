@@ -118,14 +118,22 @@ public class JeapHunter {
 	}
 
 	private void printDestructiveWrapping(HashSet<CatchClause> destructiveWrappingResult) {
-	
+
 	}
 
-	private String printCompilationUnit(CompilationUnit compilationUnit, int startPosition) {
+	private String mapCompilationUnitTo(CompilationUnit compilationUnit, int startPosition) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(compilationUnit.getTypeRoot().getJavaProject().getProject().getName()).append(" project: ");
-		sb.append(compilationUnit.getTypeRoot().getElementName()).append( " at Line:")
-		.append( compilationUnit.getLineNumber(startPosition)).append(System.lineSeparator());
+		sb.append(compilationUnit.getTypeRoot().getElementName()).append(" at Line:")
+				.append(compilationUnit.getLineNumber(startPosition));
+		return sb.toString();
+	}
+
+	private String mapCatchClauseToString(CatchClause catchClause) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(mapCompilationUnitTo((CompilationUnit) catchClause.getRoot(), catchClause.getStartPosition()));
+		sb.append(System.lineSeparator());
+		sb.append(catchClause.toString());
 		return sb.toString();
 	}
 }
