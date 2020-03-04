@@ -48,6 +48,7 @@ public class JeapHunter {
 			}
 
 			printNestedTryResults(projectNestedTryStatements);
+			printDestructiveWrapping(destructiveWrappingResult);
 			printOverCatchResult(tryWithOverCatch);
 
 		} catch (JavaModelException e) {
@@ -115,5 +116,9 @@ public class JeapHunter {
 			Console.println(overCatchTry);
 			overCatchTry.getOverCatches().forEach(overCatch -> Console.println(overCatch.getReason()));
 		}
+	}
+	
+	private void printDestructiveWrapping(HashSet<CatchClause> destructiveWrappingResult) {
+		
 	}
 }
