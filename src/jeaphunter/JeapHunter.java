@@ -26,8 +26,6 @@ public class JeapHunter {
 	public static IUserConsole Console;
 
 	private JeapHunterProject project;
-	private HashSet<TryStatement> projectNestedTryStatements = new HashSet<TryStatement>();
-	private List<JTryStatement> tryWithOverCatch = new ArrayList<JTryStatement>();
 
 	public JeapHunter(JeapHunterProject project) {
 		this.project = project;
@@ -39,6 +37,8 @@ public class JeapHunter {
 	public void detectAllExceptionAntiPatterns() {
 		SourceFile[] sourceFiles;
 		try {
+			HashSet<TryStatement> projectNestedTryStatements = new HashSet<TryStatement>();
+			List<JTryStatement> tryWithOverCatch = new ArrayList<JTryStatement>();
 			sourceFiles = project.getSourceFiles();
 			for (SourceFile sourceFile : sourceFiles) {
 				projectNestedTryStatements.addAll(detectNestedTry(sourceFile));
@@ -46,8 +46,8 @@ public class JeapHunter {
 				tryWithOverCatch.addAll(detectOverCatch(sourceFile));
 			}
 
-			printNestedTryResults();
-			printOverCatchResult();
+			printNestedTryResults(projectNestedTryStatements);
+			printOverCatchResult(tryWithOverCatch);
 
 		} catch (JavaModelException e) {
 			e.printStackTrace();
@@ -95,7 +95,7 @@ public class JeapHunter {
 		return ocd.detect();
 	}
 
-	private void printNestedTryResults() {
+	private void printNestedTryResults(HashSet<TryStatement> projectNestedTryStatements) {
 		Console.println("NESTED TRY RESULTS(" + projectNestedTryStatements.size() + " items):\n");
 
 		for (TryStatement nestedTryStatement : projectNestedTryStatements) {
@@ -107,10 +107,10 @@ public class JeapHunter {
 		}
 	}
 
-	private void printOverCatchResult() {
+	private void printOverCatchResult(List<JTryStatement> tryWithOverCatch) {
 		Console.println("---------------OVER_CATCHES--------------");
 		for (JTryStatement overCatchTry : tryWithOverCatch) {
-			
+
 			Console.println(overCatchTry);
 			overCatchTry.getOverCatches().forEach(overCatch -> Console.println(overCatch.getReason()));
 		}
