@@ -11,7 +11,7 @@ public class CatchVisitor extends ASTVisitor {
 	private final static List<CatchClause> destructiveWrapping = new ArrayList<>();
 	@Override
 	public boolean visit(CatchClause node) {
-		ThrowStatementVisitor throwStatementVisitor = new ThrowStatementVisitor();
+		ThrowStatementVisitor throwStatementVisitor = new ThrowStatementVisitor(node.getException().getName().getFullyQualifiedName());
 		node.getBody().accept(throwStatementVisitor);
 		if(throwStatementVisitor.isthrowStatementVisited()) {
 			destructiveWrapping.add(node);
