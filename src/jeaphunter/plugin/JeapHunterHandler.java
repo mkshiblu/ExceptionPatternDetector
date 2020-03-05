@@ -25,7 +25,7 @@ public class JeapHunterHandler extends AbstractHandler {
 
 		// Init plugin workspace console
 		PluginConsole.init();
-		JeapHunter.Console = new PluginConsole();
+		JeapHunter.UserConsole = new PluginConsole();
 		ASTUtil.clearCache();
 		
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();

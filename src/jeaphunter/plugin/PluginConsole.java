@@ -48,4 +48,9 @@ public class PluginConsole implements IUserConsole {
 	public void println(Object obj) {
 		consoleStream.println(obj == null ? null : obj.toString());
 	}
+
+	@Override
+	public void println() {
+		consoleStream.println();
+	}
 }

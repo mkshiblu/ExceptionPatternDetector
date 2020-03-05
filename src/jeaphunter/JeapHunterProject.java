@@ -44,4 +44,11 @@ public class JeapHunterProject {
 	public IProject getProject() {
 		return project;
 	}
+	
+	/**
+	 * Returns the name of the project
+	 */
+	public String getName() {
+		return project.getName();
+	}
 }
