@@ -1,9 +1,11 @@
 package jeaphunter;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.CatchClause;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -11,6 +13,7 @@ import org.eclipse.jdt.core.dom.TryStatement;
 
 import jeaphunter.antipattern.OverCatchDetector;
 import jeaphunter.entities.JTryStatement;
+import jeaphunter.util.Cache;
 import jeaphunter.visitors.CatchVisitor;
 import jeaphunter.visitors.TryStatementVisitor;
 import jeaphunter.visitors.TryVisitor;
@@ -35,40 +38,50 @@ public class JeapHunter {
 	 * Detects all Exception anti-patterns in the project
 	 */
 	public void detectAllExceptionAntiPatterns() {
-		SourceFile[] sourceFiles;
+
 		try {
 			HashSet<TryStatement> projectNestedTryStatements = new HashSet<TryStatement>();
 			List<JTryStatement> tryWithOverCatch = new ArrayList<JTryStatement>();
 			HashSet<CatchClause> destructiveWrappingResult = new HashSet<>();
-			sourceFiles = project.getSourceFiles();
-			for (SourceFile sourceFile : sourceFiles) {
-				projectNestedTryStatements.addAll(detectNestedTry(sourceFile));
-				destructiveWrappingResult.addAll(detectDestructiveWrapping(sourceFile));
-				//tryWithOverCatch.addAll(detectOverCatch(sourceFile));
+			ICompilationUnit[] sourceFiles = project.getSourceFiles();
+
+			if (sourceFiles.length > 0) {
+				for (ICompilationUnit icompUnit : sourceFiles) {
+					projectNestedTryStatements.addAll(detectNestedTry(icompUnit));
+					destructiveWrappingResult.addAll(detectDestructiveWrapping(icompUnit));
+					tryWithOverCatch.addAll(detectOverCatch(icompUnit));
+				}
+
+				Console.println("---------------Summary--------------");
+				Console.println("Number of Nested Try: " + projectNestedTryStatements.size());
+				Console.println("Number of Destructive Wrapping: " + destructiveWrappingResult.size());
+				Console.println("Number of Over Catch: " + tryWithOverCatch.size());
+
+				printNestedTryResults(projectNestedTryStatements);
+				printDestructiveWrapping(destructiveWrappingResult);
+				printOverCatchResult(tryWithOverCatch);
+			} else {
+				Console.println("No source files loaded for project " + project.getProject().getName());
 			}
-
-			Console.println("---------------Summary--------------");
-			Console.println("Number of Nested Try: " + projectNestedTryStatements.size());
-			Console.println("Number of Destructive Wrapping: " + destructiveWrappingResult.size());
-			Console.println("Number of Over Catch: " + tryWithOverCatch.size());
-
-			printNestedTryResults(projectNestedTryStatements);
-			printDestructiveWrapping(destructiveWrappingResult);
-			printOverCatchResult(tryWithOverCatch);
 
 		} catch (JavaModelException e) {
 			e.printStackTrace();
+		} finally {
+			Cache.clear();
 		}
 	}
 
-	public HashSet<TryStatement> detectNestedTry(SourceFile sourceFile) {
-		CompilationUnit compilationUnit = sourceFile.getCompilationUnit();
+	public HashSet<TryStatement> detectNestedTry(ICompilationUnit icompUnit) {
+		CompilationUnit compilationUnit = Cache.parse(icompUnit, false);
+
 		TryStatementVisitor compilationUnitTryVisitor = new TryStatementVisitor();
 		HashSet<TryStatement> compilationUnitNestedTryStatements = new HashSet<>();
 		compilationUnit.accept(compilationUnitTryVisitor);
 		for (TryStatement tryStatement : compilationUnitTryVisitor.getTryStatements()) {
 			TryStatementVisitor tryStatementTryVisitor = new TryStatementVisitor();
+
 			tryStatement.getBody().accept(tryStatementTryVisitor);
+
 			if (tryStatementTryVisitor.getTryStatements().size() > 0) {
 				for(TryStatement nestedTryStatement : tryStatementTryVisitor.getTryStatements()) {
 					if(nestedTryStatement.catchClauses() != null && nestedTryStatement.catchClauses().size() > 0) {
@@ -80,9 +93,9 @@ public class JeapHunter {
 		return compilationUnitNestedTryStatements;
 	}
 
-	public HashSet<CatchClause> detectDestructiveWrapping(SourceFile sourceFile) {
+	public HashSet<CatchClause> detectDestructiveWrapping(ICompilationUnit icompUnit) {
+		CompilationUnit compilationUnit = Cache.parse(icompUnit, false);
 		CatchVisitor catchVisitor = new CatchVisitor();
-		CompilationUnit compilationUnit = sourceFile.getCompilationUnit();
 		compilationUnit.accept(catchVisitor);
 		return new HashSet<>(catchVisitor.getDestructiveWrapping());
 	}
@@ -93,11 +106,13 @@ public class JeapHunter {
 	 * 
 	 * @param compilationUnit
 	 */
-	public List<JTryStatement> detectOverCatch(SourceFile sourceFile) {
-		CompilationUnit cu = sourceFile.getCompilationUnit();
-		TryVisitor visitor = new TryVisitor(cu, sourceFile.getFilePath());
+	public List<JTryStatement> detectOverCatch(ICompilationUnit icompUnit) {
+		CompilationUnit cu = Cache.getCompilationUnit(icompUnit);
+
+		TryVisitor visitor = new TryVisitor(cu);
 		visitor.setMustHaveCatchClause(true);
 		cu.accept(visitor);
+		visitor.close();
 
 		List<JTryStatement> rootLevelTryStatements = visitor.getTryStatements();
 		OverCatchDetector ocd = new OverCatchDetector(rootLevelTryStatements);
@@ -140,7 +155,7 @@ public class JeapHunter {
 		StringBuilder sb = new StringBuilder();
 		sb.append(mapCompilationUnitToString((CompilationUnit) catchClause.getRoot(), catchClause.getStartPosition()));
 		sb.append(System.lineSeparator());
-		sb.append(catchClause.toString());
+		// sb.append(catchClause.toString());
 		return sb.toString();
 	}
 }

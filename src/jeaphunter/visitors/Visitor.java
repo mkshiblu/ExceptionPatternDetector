@@ -4,9 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
@@ -57,12 +55,15 @@ public class Visitor extends ASTVisitor {
 		jTry.setParentTry(rootTry);
 		jTry.addCatchClauses(node.catchClauses());
 		jTry.setBody(node.getBody());
-		jTry.setSoureFilePath(rootTry.getSoureFilePath());
 
 		ASTNode root = node.getRoot();
 		if (root instanceof CompilationUnit) {
-			int lineNo = ((CompilationUnit) root).getLineNumber(node.getStartPosition());
-			int columnNo = ((CompilationUnit) root).getColumnNumber(node.getStartPosition());
+
+			CompilationUnit cu = (CompilationUnit) root;
+			jTry.setSoureFilePath(cu.getTypeRoot().getElementName());
+
+			int lineNo = cu.getLineNumber(node.getStartPosition());
+			int columnNo = cu.getColumnNumber(node.getStartPosition());
 			jTry.setStartLineInSource(lineNo);
 			jTry.setStartColumnInSource(columnNo);
 		}
@@ -91,6 +92,10 @@ public class Visitor extends ASTVisitor {
 		} else {
 
 			IMethodBinding binding = node.resolveMethodBinding();
+
+			IMember member = (IMember) binding.getJavaElement();
+			// member.getAttachedJavadoc(null);
+
 			if (binding != null) {
 				IMethodBinding thridPartyDeclaration = binding.getMethodDeclaration();
 				// TODO find ejavadoc
