@@ -10,6 +10,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 
 public class Cache {
 
+	public static final int CAPACITY = 10;
 	private static Map<ICompilationUnit, CompilationUnit> iCompMap = new HashMap<>();
 
 	public static CompilationUnit getCompilationUnit(ICompilationUnit iCompilationUnit) {
@@ -19,6 +20,10 @@ public class Cache {
 		}
 
 		CompilationUnit unit = parse(iCompilationUnit, true);
+		if (hasReachedMaxCapacity()) {
+			iCompMap.clear();
+		}
+		
 		iCompMap.put(iCompilationUnit, unit);
 		return unit;
 	}
@@ -34,5 +39,9 @@ public class Cache {
 
 	public static void clear() {
 		iCompMap.clear();
+	}
+
+	public static boolean hasReachedMaxCapacity() {
+		return iCompMap.size() >= CAPACITY;
 	}
 }

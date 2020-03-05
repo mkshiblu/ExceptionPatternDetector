@@ -83,8 +83,8 @@ public class JeapHunter {
 			tryStatement.getBody().accept(tryStatementTryVisitor);
 
 			if (tryStatementTryVisitor.getTryStatements().size() > 0) {
-				for(TryStatement nestedTryStatement : tryStatementTryVisitor.getTryStatements()) {
-					if(nestedTryStatement.catchClauses() != null && nestedTryStatement.catchClauses().size() > 0) {
+				for (TryStatement nestedTryStatement : tryStatementTryVisitor.getTryStatements()) {
+					if (nestedTryStatement.catchClauses() != null && nestedTryStatement.catchClauses().size() > 0) {
 						compilationUnitNestedTryStatements.add(tryStatement);
 					}
 				}
@@ -109,10 +109,9 @@ public class JeapHunter {
 	public List<JTryStatement> detectOverCatch(ICompilationUnit icompUnit) {
 		CompilationUnit cu = Cache.getCompilationUnit(icompUnit);
 
-		TryVisitor visitor = new TryVisitor(cu);
+		TryVisitor visitor = new TryVisitor();
 		visitor.setMustHaveCatchClause(true);
 		cu.accept(visitor);
-		visitor.close();
 
 		List<JTryStatement> rootLevelTryStatements = visitor.getTryStatements();
 		OverCatchDetector ocd = new OverCatchDetector(rootLevelTryStatements);

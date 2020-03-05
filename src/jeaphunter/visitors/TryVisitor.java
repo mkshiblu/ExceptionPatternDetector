@@ -11,20 +11,13 @@ import org.eclipse.jdt.core.dom.TryStatement;
 
 import jeaphunter.entities.JTryStatement;
 
-public class TryVisitor extends ASTVisitor implements Closeable {
+public class TryVisitor extends ASTVisitor {
 
 	private List<JTryStatement> jTryStatements = new ArrayList<>();
-
-	private CompilationUnit cu;
-
 	/**
 	 * Consider try which have catch clause
 	 */
 	private boolean mustHaveCatchClause;
-
-	public TryVisitor(CompilationUnit cu) {
-		this.cu = cu;
-	}
 
 	@Override
 	public boolean visit(TryStatement node) {
@@ -34,18 +27,16 @@ public class TryVisitor extends ASTVisitor implements Closeable {
 		JTryStatement jTry = new JTryStatement(node);
 		jTry.addCatchClauses(node.catchClauses());
 		jTry.setBody(node.getBody());
-		jTry.setSoureFilePath(cu.getTypeRoot().getElementName());
-		if (cu != null) {
-			jTry.setStartLineInSource(cu.getLineNumber(node.getStartPosition()));
-			jTry.setStartColumnInSource(cu.getColumnNumber(node.getStartPosition()));
-		} else {
-			ASTNode root = node.getRoot();
-			if (root instanceof CompilationUnit) {
-				int lineNo = ((CompilationUnit) root).getLineNumber(node.getStartPosition());
-				int columnNo = ((CompilationUnit) root).getColumnNumber(node.getStartPosition());
-				jTry.setStartLineInSource(lineNo);
-				jTry.setStartColumnInSource(columnNo);
-			}
+
+		ASTNode root = node.getRoot();
+		if (root instanceof CompilationUnit) {
+			CompilationUnit cunit = (CompilationUnit) root;
+			jTry.setSoureFilePath(cunit.getTypeRoot().getElementName());
+			int lineNo = cunit.getLineNumber(node.getStartPosition());
+			int columnNo = cunit.getColumnNumber(node.getStartPosition());
+			jTry.setStartLineInSource(lineNo);
+			jTry.setStartColumnInSource(columnNo);
+			cunit = null;
 		}
 
 		jTryStatements.add(jTry);
@@ -68,10 +59,5 @@ public class TryVisitor extends ASTVisitor implements Closeable {
 	 */
 	public void setMustHaveCatchClause(boolean mustHaveCatchClause) {
 		this.mustHaveCatchClause = mustHaveCatchClause;
-	}
-
-	@Override
-	public void close() {
-		cu = null;
 	}
 }
