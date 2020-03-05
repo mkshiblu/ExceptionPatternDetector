@@ -11,7 +11,6 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 
-import jdk.internal.org.objectweb.asm.tree.MethodNode;
 import jeaphunter.entities.JTryStatement;
 import jeaphunter.util.ASTUtil;
 import jeaphunter.visitors.Visitor;
