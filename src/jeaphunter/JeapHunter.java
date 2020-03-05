@@ -44,7 +44,7 @@ public class JeapHunter {
 			for (SourceFile sourceFile : sourceFiles) {
 				projectNestedTryStatements.addAll(detectNestedTry(sourceFile));
 				destructiveWrappingResult.addAll(detectDestructiveWrapping(sourceFile));
-				tryWithOverCatch.addAll(detectOverCatch(sourceFile));
+				//tryWithOverCatch.addAll(detectOverCatch(sourceFile));
 			}
 
 			Console.println("---------------Summary--------------");
@@ -68,11 +68,13 @@ public class JeapHunter {
 		compilationUnit.accept(compilationUnitTryVisitor);
 		for (TryStatement tryStatement : compilationUnitTryVisitor.getTryStatements()) {
 			TryStatementVisitor tryStatementTryVisitor = new TryStatementVisitor();
-
 			tryStatement.getBody().accept(tryStatementTryVisitor);
-
 			if (tryStatementTryVisitor.getTryStatements().size() > 0) {
-				compilationUnitNestedTryStatements.add(tryStatement);
+				for(TryStatement nestedTryStatement : tryStatementTryVisitor.getTryStatements()) {
+					if(nestedTryStatement.catchClauses() != null && nestedTryStatement.catchClauses().size() > 0) {
+						compilationUnitNestedTryStatements.add(tryStatement);
+					}
+				}
 			}
 		}
 		return compilationUnitNestedTryStatements;
@@ -138,7 +140,7 @@ public class JeapHunter {
 		StringBuilder sb = new StringBuilder();
 		sb.append(mapCompilationUnitToString((CompilationUnit) catchClause.getRoot(), catchClause.getStartPosition()));
 		sb.append(System.lineSeparator());
-		// sb.append(catchClause.toString());
+		sb.append(catchClause.toString());
 		return sb.toString();
 	}
 }
