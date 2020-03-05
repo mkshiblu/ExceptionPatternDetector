@@ -1,51 +1,28 @@
 package jeaphunter.visitors;
 
+import java.io.Closeable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.CatchClause;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.IMethodBinding;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.TryStatement;
-import org.eclipse.jdt.internal.corext.dom.ASTNodes;
 
-import jeaphunter.antipattern.OverCatchAntiPattern;
 import jeaphunter.entities.JTryStatement;
 
-public class TryVisitor extends ASTVisitor {
+public class TryVisitor extends ASTVisitor implements Closeable {
 
 	private List<JTryStatement> jTryStatements = new ArrayList<>();
 
 	private CompilationUnit cu;
-	private String filePath;
 
 	/**
 	 * Consider try which have catch clause
 	 */
 	private boolean mustHaveCatchClause;
 
-	public TryVisitor() {
-
-	}
-
-	public TryVisitor(String filePath) {
-		this.filePath = filePath;
-	}
-
-	public TryVisitor(CompilationUnit cu, String filePath) {
-		this(filePath);
+	public TryVisitor(CompilationUnit cu) {
 		this.cu = cu;
 	}
 
@@ -57,7 +34,7 @@ public class TryVisitor extends ASTVisitor {
 		JTryStatement jTry = new JTryStatement(node);
 		jTry.addCatchClauses(node.catchClauses());
 		jTry.setBody(node.getBody());
-		jTry.setSoureFilePath(filePath);
+		jTry.setSoureFilePath(cu.getTypeRoot().getElementName());
 
 		if (cu != null) {
 			jTry.setStartLineInSource(cu.getLineNumber(node.getStartPosition()));
@@ -92,5 +69,10 @@ public class TryVisitor extends ASTVisitor {
 	 */
 	public void setMustHaveCatchClause(boolean mustHaveCatchClause) {
 		this.mustHaveCatchClause = mustHaveCatchClause;
+	}
+
+	@Override
+	public void close() {
+		cu = null;
 	}
 }

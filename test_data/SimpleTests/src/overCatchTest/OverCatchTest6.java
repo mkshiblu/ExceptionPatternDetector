@@ -24,5 +24,6 @@ public class OverCatchTest6 {
 		} catch (Exception ex) {
 
 		}
+		throw new NullPointerException();
 		}
 }

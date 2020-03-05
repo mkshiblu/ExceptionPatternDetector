@@ -29,18 +29,14 @@ public class ASTUtil {
 		MethodDeclaration md = null;
 		try {
 			IMethodBinding binding = node.resolveMethodBinding();
-			ICompilationUnit unit = (ICompilationUnit) binding.getJavaElement()
+			ICompilationUnit iunit = (ICompilationUnit) binding.getJavaElement()
 					.getAncestor(IJavaElement.COMPILATION_UNIT);
 
-			if (unit == null) {
+			if (iunit == null) {
 				return null;
 			}
 
-			ASTParser parser = ASTParser.newParser(AST.JLS13);
-			parser.setKind(ASTParser.K_COMPILATION_UNIT);
-			parser.setSource(unit);
-			parser.setResolveBindings(true);
-			CompilationUnit cu = (CompilationUnit) parser.createAST(null);
+			CompilationUnit cu = Cache.getCompilationUnit(iunit);
 			md = (MethodDeclaration) cu.findDeclaringNode(binding.getKey());
 		} catch (Exception ex) {
 			System.out.println("Cannot resolve declaration for: " + node);
