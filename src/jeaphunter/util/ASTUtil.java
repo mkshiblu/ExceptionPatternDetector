@@ -21,7 +21,10 @@ import org.eclipse.jdt.core.dom.TagElement;
 
 public class ASTUtil {
 
-	private static Map<ITypeBinding, Set<ITypeBinding>> typeSuperClasses = new HashMap<>();
+	/**
+	 * Holds a map of qualified name and their superclasses
+	 */
+	private static Map<String, Set<ITypeBinding>> typeSuperClasses = new HashMap<>();
 
 	/** this only works when the method is declared in an Eclipse project **/
 	public static MethodDeclaration declarationFromInvocation(MethodInvocation node) {
@@ -113,8 +116,8 @@ public class ASTUtil {
 	 */
 	public static boolean isSubClass(final ITypeBinding typeBinding, final ITypeBinding potentialSuperType) {
 		// Get the already calculated super types
-		Set<ITypeBinding> superTypes = typeSuperClasses.get(typeBinding);
-		if (superTypes != null && superTypes.contains(potentialSuperType)) {
+		Set<ITypeBinding> superTypes = typeSuperClasses.get(typeBinding.getKey());
+		if (superTypes != null && superTypes.contains(potentialSuperType.getKey())) {
 			return true;
 		}
 
@@ -122,12 +125,11 @@ public class ASTUtil {
 		ITypeBinding currClass = typeBinding;
 
 		while ((superClass = currClass.getSuperclass()) != null) {
-			if (superClass.getQualifiedName().equals(potentialSuperType.getQualifiedName())) {
-
+			if (superClass.getKey().equals(potentialSuperType.getKey())) {
 				// Add to the cache
 				if (superTypes == null) {
 					superTypes = new HashSet<>();
-					typeSuperClasses.put(typeBinding, superTypes);
+					typeSuperClasses.put(typeBinding.getKey(), superTypes);
 				}
 				superTypes.add(potentialSuperType);
 				return true;

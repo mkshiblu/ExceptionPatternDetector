@@ -28,6 +28,12 @@ public class Cache {
 		return unit;
 	}
 
+	/**
+	 * Parse and return the underlying compilation unit
+	 * @param iUnit
+	 * @param resolveBinding
+	 * @return
+	 */
 	public static CompilationUnit parse(ICompilationUnit iUnit, boolean resolveBinding) {
 		ASTParser parser = ASTParser.newParser(AST.JLS13);
 		parser.setKind(ASTParser.K_COMPILATION_UNIT);

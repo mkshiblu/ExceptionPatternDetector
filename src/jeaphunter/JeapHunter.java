@@ -146,6 +146,11 @@ public class JeapHunter {
 		}
 	}
 
+	private void printDestructiveWrapping(HashSet<CatchClause> destructiveWrappingResult) {
+		UserConsole.println("---------------DESTRUCTIVE WRAPPING--------------");
+		destructiveWrappingResult.stream().map(this::mapCatchClauseToString).forEach(UserConsole::println);
+	}
+
 	private void printOverCatchResult(List<JTryStatement> tryWithOverCatch) {
 		UserConsole.println("---------------OVER CATCH--------------");
 		for (JTryStatement overCatchTry : tryWithOverCatch) {
@@ -153,11 +158,6 @@ public class JeapHunter {
 					overCatchTry.getTryStatement().getStartPosition()));
 			overCatchTry.getOverCatches().forEach(overCatch -> UserConsole.println(overCatch.getReason()));
 		}
-	}
-
-	private void printDestructiveWrapping(HashSet<CatchClause> destructiveWrappingResult) {
-		UserConsole.println("---------------DESTRUCTIVE WRAPPING--------------");
-		destructiveWrappingResult.stream().map(this::mapCatchClauseToString).forEach(UserConsole::println);
 	}
 
 	private String mapCompilationUnitToString(CompilationUnit compilationUnit, int startPosition) {
