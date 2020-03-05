@@ -28,12 +28,11 @@ public class ASTUtil {
 	public static MethodDeclaration declarationFromInvocation(MethodInvocation node) {
 		MethodDeclaration md = null;
 		try {
-			IMethodBinding binding = (IMethodBinding) node.getName().resolveBinding();
+			IMethodBinding binding = node.resolveMethodBinding();
 			ICompilationUnit unit = (ICompilationUnit) binding.getJavaElement()
 					.getAncestor(IJavaElement.COMPILATION_UNIT);
 
 			if (unit == null) {
-				// not available, external declaration
 				return null;
 			}
 

@@ -1,13 +1,18 @@
 package jeaphunter.visitors;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.eclipse.jdt.core.ICompilationUnit;
+import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Javadoc;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -24,7 +29,7 @@ public class Visitor extends ASTVisitor {
 
 	public static final int MAX_DEPTH_OF_SEARCHING_INSIDE_METHOD_INVOCATIONS = 5;
 
-	private List<JTryStatement> jTryStatements = new ArrayList<>();
+	private Set<JTryStatement> jTryStatements = new HashSet<>();
 	private int methodInvocationDepth = 1;
 
 	JTryStatement rootTry;
@@ -75,11 +80,35 @@ public class Visitor extends ASTVisitor {
 	@Override
 	public boolean visit(MethodInvocation node) {
 		rootTry.addToInvokedMethods(node);
+
 		MethodDeclaration declartion = ASTUtil.declarationFromInvocation(node);
+		List<Type> thrownFromSignature = null;
+		Javadoc javadoc = null;
 
 		if (declartion != null) {
-			List<Type> thrownFromSignature = declartion.thrownExceptionTypes();
+			thrownFromSignature = declartion.thrownExceptionTypes();
+			javadoc = declartion.getJavadoc();
+		} else {
 
+			IMethodBinding binding = node.resolveMethodBinding();
+			if (binding != null) {
+				IMethodBinding thridPartyDeclaration = binding.getMethodDeclaration();
+				// TODO find ejavadoc
+				if (thridPartyDeclaration != null) {
+					ITypeBinding[] types = thridPartyDeclaration.getExceptionTypes();
+					if (types != null && types.length > 0)
+						for (ITypeBinding exp : types) {
+							rootTry.addToThrownExceptionTypes(exp);
+						}
+				}
+			} else {
+
+				System.out.println("Cannot resolve method declaration for " + node);
+			}
+		}
+
+		// Check if thrown from method signature
+		if (thrownFromSignature != null) {
 			for (Type type : thrownFromSignature) {
 				ITypeBinding typeBinding = type.resolveBinding();
 
@@ -89,22 +118,22 @@ public class Visitor extends ASTVisitor {
 					rootTry.addToThrownExceptionTypes(typeBinding);
 				}
 			}
+		}
 
-			// TODO Check thrown from declaration javadoc if any throws
-			Javadoc javadoc = declartion.getJavadoc();
-			if (javadoc != null) {
-				List<ITypeBinding> thrownTypes = ASTUtil.getThrowableExceptionsFromJavadoc(javadoc);
-				for (ITypeBinding typeBinding : thrownTypes) {
-					rootTry.addToThrownExceptionTypes(typeBinding);
-				}
+		// Check if throwns from javadoc
+		if (javadoc != null) {
+			List<ITypeBinding> thrownTypes = ASTUtil.getThrowableExceptionsFromJavadoc(javadoc);
+			for (ITypeBinding typeBinding : thrownTypes) {
+				rootTry.addToThrownExceptionTypes(typeBinding);
 			}
+		}
 
-			if (methodInvocationDepth == MAX_DEPTH_OF_SEARCHING_INSIDE_METHOD_INVOCATIONS)
-				return false;
-
+		// Traverse declaration if depth is not reached
+		if (declartion != null && methodInvocationDepth != MAX_DEPTH_OF_SEARCHING_INSIDE_METHOD_INVOCATIONS) {
 			Visitor visitor = new Visitor(rootTry, methodInvocationDepth + 1);
 			declartion.accept(visitor);
 		}
+
 		return false;
 	}
 //
@@ -146,7 +175,7 @@ public class Visitor extends ASTVisitor {
 		return false;
 	}
 
-	public List<JTryStatement> getTryStatements() {
+	public Set<JTryStatement> getTryStatements() {
 		return jTryStatements;
 	}
 }
