@@ -38,4 +38,5 @@ public class ThrowStatementVisitor extends ASTVisitor {
 	public boolean isthrowStatementVisited() {
 		return throwStatementVisited;
 	}
+
 }
