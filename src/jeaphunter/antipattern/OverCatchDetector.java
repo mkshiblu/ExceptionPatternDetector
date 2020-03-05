@@ -18,7 +18,7 @@ import jeaphunter.visitors.Visitor;
 public class OverCatchDetector {
 
 	private List<JTryStatement> tryStatements;
-	private Set<JTryStatement> tryWithOverCatch = new HashSet<>();
+	private static Set<JTryStatement> tryWithOverCatch = new HashSet<>();
 
 	public OverCatchDetector(List<JTryStatement> tryStatements) {
 		this.tryStatements = tryStatements;
@@ -163,7 +163,11 @@ public class OverCatchDetector {
 		}
 	}
 
-	public Set<JTryStatement> getTryWithOverCatch() {
+	public static Set<JTryStatement> getTryWithOverCatch() {
 		return tryWithOverCatch;
+	}
+	
+	public static void clear() {
+		tryWithOverCatch.clear();
 	}
 }

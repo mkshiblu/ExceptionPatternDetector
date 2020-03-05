@@ -1,14 +1,17 @@
 package jeaphunter.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IMethodBinding;
@@ -18,6 +21,11 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.TagElement;
+import org.eclipse.jdt.core.search.IJavaSearchScope;
+import org.eclipse.jdt.core.search.SearchEngine;
+import org.eclipse.jdt.internal.corext.callhierarchy.CallHierarchy;
+import org.eclipse.jdt.internal.corext.callhierarchy.MethodCall;
+import org.eclipse.jdt.internal.corext.callhierarchy.MethodWrapper;
 
 public class ASTUtil {
 
@@ -164,6 +172,24 @@ public class ASTUtil {
 				subClasses.add(subClass);
 		}
 		return subClasses;
+	}
+
+	public void callGraph(IMember[] methods) {
+		CallHierarchy hierarchy = null;
+		IJavaSearchScope searchScope = SearchEngine.createWorkspaceScope();
+		hierarchy.setSearchScope(searchScope);
+		ArrayList<MethodCall> methodCalls = new ArrayList<MethodCall>();
+
+		MethodWrapper[] callerWrapper = hierarchy.getCallerRoots(methods);
+		ArrayList<MethodWrapper> callsWrapper = new ArrayList<MethodWrapper>();
+		for (int i = 0; i < callerWrapper.length; i++) {
+			callsWrapper.addAll(Arrays.asList(callerWrapper[i].getCalls(new NullProgressMonitor())));
+		}
+
+		for (int i = 0; i < callsWrapper.size(); i++)
+			methodCalls.add(callsWrapper.get(i).getMethodCall());
+		// Now you will get method calls in methodCalls list.
+		IMember member = methodCalls.get(0).getMember();
 	}
 
 	/**

@@ -4,14 +4,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IMember;
-import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.ConstructorInvocation;
 import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Javadoc;
@@ -88,7 +87,6 @@ public class Visitor extends ASTVisitor {
 		MethodDeclaration declartion = ASTUtil.declarationFromInvocation(node);
 		List<Type> thrownFromSignature = null;
 		Javadoc javadoc = null;
-
 		if (declartion != null) {
 			thrownFromSignature = declartion.thrownExceptionTypes();
 			javadoc = declartion.getJavadoc();
@@ -156,12 +154,20 @@ public class Visitor extends ASTVisitor {
 		rootTry.addToInvokedMethods(node);
 		return false;
 	}
-//
-//	@Override
-//	public boolean visit(ClassInstanceCreation node) {
-//		ITypeBinding binding = node.getType().resolveBinding();
-//		return false;
-//	}
+
+	@Override
+	public boolean visit(ClassInstanceCreation node) {
+		IMethodBinding constructor = node.resolveConstructorBinding();
+		if (constructor != null) {
+			ITypeBinding[] exceptions = constructor.getExceptionTypes();
+			if (exceptions != null) {
+				for (ITypeBinding exception : exceptions) {
+					rootTry.addToThrownExceptionTypes(exception);
+				}
+			}
+		}
+		return false;
+	}
 
 	@Override
 	public boolean visit(ThrowStatement node) {

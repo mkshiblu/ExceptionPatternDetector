@@ -71,8 +71,9 @@ public class JeapHunter {
 
 				// UserConsole.println("Detecting Over Catch...");
 				for (ICompilationUnit icompUnit : sourceFiles) {
-					tryWithOverCatch.addAll(detectOverCatch(icompUnit));
+					detectOverCatch(icompUnit);
 				}
+				tryWithOverCatch.addAll(OverCatchDetector.getTryWithOverCatch());
 				if (tryWithOverCatch.size() > 0) {
 					printOverCatchResult(tryWithOverCatch);
 				}
@@ -88,6 +89,7 @@ public class JeapHunter {
 			e.printStackTrace();
 		} finally {
 			Cache.clear();
+			OverCatchDetector.clear();
 		}
 	}
 
@@ -126,7 +128,7 @@ public class JeapHunter {
 	 * 
 	 * @param compilationUnit
 	 */
-	public List<JTryStatement> detectOverCatch(ICompilationUnit icompUnit) {
+	public void detectOverCatch(ICompilationUnit icompUnit) {
 		CompilationUnit cu = Cache.getCompilationUnit(icompUnit);
 
 		TryVisitor visitor = new TryVisitor();
@@ -135,7 +137,7 @@ public class JeapHunter {
 
 		List<JTryStatement> rootLevelTryStatements = visitor.getTryStatements();
 		OverCatchDetector ocd = new OverCatchDetector(rootLevelTryStatements);
-		return ocd.detect();
+		ocd.detect();
 	}
 
 	private void printNestedTryResults(HashSet<TryStatement> projectNestedTryStatements) {
