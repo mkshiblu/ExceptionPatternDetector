@@ -54,7 +54,9 @@ public class OverCatchDetector {
 	 */
 	private Set<ITypeBinding> getUnhandledExceptions(final JTryStatement jtry) {
 		final Set<ITypeBinding> unhandled = new HashSet<>();
-		final Set<ITypeBinding> thrownExceptions = jtry.getThrownExceptionTypes();
+		final Set<ITypeBinding> thrownExceptions = new HashSet<ITypeBinding>();
+		thrownExceptions.addAll(jtry.getThrownExceptionTypes());
+		thrownExceptions.addAll(jtry.getPropagatedExceptionsFromNestedTryStatemetns());
 		final Set<ITypeBinding> catchExceptions = jtry.getCatchClauseExceptionTypes();
 
 		boolean handledInCatch;
@@ -103,7 +105,7 @@ public class OverCatchDetector {
 		final StringBuilder subExceptionNames = new StringBuilder(); // For printing
 
 		for (final ITypeBinding catchException : sortedCatchExceptions) {
-			subExceptionNames.setLength(0);
+			subExceptionNames.setLength(0); 
 			// Find the sub exceptions caught by this catch
 			caughtSubExceptions = ASTUtil.getMatchedSubClasses(catchException, thrownExceptions);
 
