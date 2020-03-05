@@ -7,8 +7,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ITypeBinding;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
 
+import jdk.internal.org.objectweb.asm.tree.MethodNode;
 import jeaphunter.entities.JTryStatement;
 import jeaphunter.util.ASTUtil;
 import jeaphunter.visitors.Visitor;
@@ -145,7 +148,20 @@ public class OverCatchDetector {
 
 	private void preporcess() {
 		for (JTryStatement jTry : tryStatements) {
-			Visitor visitor = new Visitor(jTry);
+
+			ASTNode enclosingType;
+			MethodDeclaration declaration;
+
+			while ((enclosingType = jTry.getTryStatement().getParent()) != null) {
+				if (enclosingType.getNodeType() == ASTNode.METHOD_DECLARATION) {
+					declaration = (MethodDeclaration) enclosingType;
+					break;
+				}
+			}
+
+			jTry.getTryStatement().getParent();
+
+			Visitor visitor = new Visitor(jTry, null);
 			jTry.getBody().accept(visitor);
 		}
 	}

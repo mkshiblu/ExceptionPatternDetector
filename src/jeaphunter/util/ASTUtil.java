@@ -9,8 +9,7 @@ import java.util.Set;
 
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
@@ -137,6 +136,22 @@ public class ASTUtil {
 		}
 
 		return false;
+	}
+
+	public static IMethodBinding getAncestorMethod(MethodInvocation methodInvoke) {
+
+		IMethodBinding methodBinding = methodInvoke.resolveMethodBinding();
+
+		if (methodBinding != null) {
+			IMethod method = (IMethod) (methodBinding.getJavaElement().getAncestor(IJavaElement.METHOD));
+
+			if (method != null) {
+				method = null;
+			}
+		}
+
+		return null;
+
 	}
 
 	public static Set<ITypeBinding> getMatchedSubClasses(ITypeBinding typeBindinng,

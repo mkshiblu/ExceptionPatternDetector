@@ -4,7 +4,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IMember;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
@@ -25,19 +27,21 @@ import jeaphunter.util.ASTUtil;
 
 public class Visitor extends ASTVisitor {
 
-	public static final int MAX_DEPTH_OF_SEARCHING_INSIDE_METHOD_INVOCATIONS = 5;
+	public static final int MAX_DEPTH_OF_SEARCHING_INSIDE_METHOD_INVOCATIONS = 4;
 
 	private Set<JTryStatement> jTryStatements = new HashSet<>();
 	private int methodInvocationDepth = 1;
 
 	JTryStatement rootTry;
+	MethodInvocation currentMethod;
 
-	public Visitor(JTryStatement rootTry) {
+	public Visitor(JTryStatement rootTry, MethodInvocation currentMethod) {
 		this.rootTry = rootTry;
+		this.currentMethod = currentMethod;
 	}
 
-	public Visitor(JTryStatement parentTry, int methodInvocationDepth) {
-		this(parentTry);
+	public Visitor(JTryStatement parentTry, MethodInvocation currentMethod, int methodInvocationDepth) {
+		this(parentTry, currentMethod);
 		this.methodInvocationDepth = methodInvocationDepth;
 	}
 
@@ -71,7 +75,7 @@ public class Visitor extends ASTVisitor {
 		jTryStatements.add(jTry);
 		rootTry.addToNestedTryStatements(jTry);
 
-		Visitor v = new Visitor(jTry);
+		Visitor v = new Visitor(jTry, currentMethod, methodInvocationDepth);
 		node.getBody().accept(v);
 
 		// Skip child block visits
@@ -80,7 +84,6 @@ public class Visitor extends ASTVisitor {
 
 	@Override
 	public boolean visit(MethodInvocation node) {
-		rootTry.addToInvokedMethods(node);
 
 		MethodDeclaration declartion = ASTUtil.declarationFromInvocation(node);
 		List<Type> thrownFromSignature = null;
@@ -93,10 +96,19 @@ public class Visitor extends ASTVisitor {
 
 			IMethodBinding binding = node.resolveMethodBinding();
 
-			IMember member = (IMember) binding.getJavaElement();
-			// member.getAttachedJavadoc(null);
-
 			if (binding != null) {
+
+//				if (binding.getJavaElement() instanceof IMember) {
+//					IMember member = (IMember) binding.getJavaElement();
+//
+//					try {
+//						// String html = member.getAttachedJavadoc(null);
+//					} catch (Exception e) {
+//						// TODO Auto-generated catch block
+//						// e.printStackTrace();
+//					}
+//				}
+
 				IMethodBinding thridPartyDeclaration = binding.getMethodDeclaration();
 				// TODO find ejavadoc
 				if (thridPartyDeclaration != null) {
@@ -134,11 +146,14 @@ public class Visitor extends ASTVisitor {
 		}
 
 		// Traverse declaration if depth is not reached
-		if (declartion != null && methodInvocationDepth != MAX_DEPTH_OF_SEARCHING_INSIDE_METHOD_INVOCATIONS) {
-			Visitor visitor = new Visitor(rootTry, methodInvocationDepth + 1);
-			declartion.accept(visitor);
+		if (declartion != null && methodInvocationDepth < MAX_DEPTH_OF_SEARCHING_INSIDE_METHOD_INVOCATIONS) {
+			if (!node.equals(currentMethod)) {
+				Visitor visitor = new Visitor(rootTry, node, methodInvocationDepth + 1);
+				declartion.accept(visitor);
+			}
 		}
 
+		rootTry.addToInvokedMethods(node);
 		return false;
 	}
 //

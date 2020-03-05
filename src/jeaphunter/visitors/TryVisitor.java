@@ -35,7 +35,6 @@ public class TryVisitor extends ASTVisitor implements Closeable {
 		jTry.addCatchClauses(node.catchClauses());
 		jTry.setBody(node.getBody());
 		jTry.setSoureFilePath(cu.getTypeRoot().getElementName());
-
 		if (cu != null) {
 			jTry.setStartLineInSource(cu.getLineNumber(node.getStartPosition()));
 			jTry.setStartColumnInSource(cu.getColumnNumber(node.getStartPosition()));
