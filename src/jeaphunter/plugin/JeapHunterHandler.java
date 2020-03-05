@@ -7,12 +7,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.jdt.core.*;
-import org.eclipse.jdt.core.dom.*;
 
 import jeaphunter.JeapHunterProject;
 import jeaphunter.util.ASTUtil;
@@ -27,7 +21,7 @@ public class JeapHunterHandler extends AbstractHandler {
 		PluginConsole.init();
 		JeapHunter.UserConsole = new PluginConsole();
 		ASTUtil.clearCache();
-		
+
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = workspace.getRoot();
 
@@ -38,9 +32,9 @@ public class JeapHunterHandler extends AbstractHandler {
 			public void run() {
 				detectAntiPatterns(projects);
 			}
-			
+
 		}).start();
-		
+
 		return null;
 	}
 
