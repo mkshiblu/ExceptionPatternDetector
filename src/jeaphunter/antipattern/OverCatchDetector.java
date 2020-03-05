@@ -148,19 +148,17 @@ public class OverCatchDetector {
 	private void preporcess() {
 		for (JTryStatement jTry : tryStatements) {
 
-			ASTNode enclosingType;
-			MethodDeclaration declaration;
+			ASTNode enclosingType = jTry.getTryStatement();
+			MethodDeclaration declaration = null;
 
-			while ((enclosingType = jTry.getTryStatement().getParent()) != null) {
+			while ((enclosingType = enclosingType.getParent()) != null) {
 				if (enclosingType.getNodeType() == ASTNode.METHOD_DECLARATION) {
 					declaration = (MethodDeclaration) enclosingType;
 					break;
 				}
 			}
 
-			jTry.getTryStatement().getParent();
-
-			Visitor visitor = new Visitor(jTry, null);
+			Visitor visitor = new Visitor(jTry, declaration);
 			jTry.getBody().accept(visitor);
 		}
 	}

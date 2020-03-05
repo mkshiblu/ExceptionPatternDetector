@@ -33,14 +33,14 @@ public class Visitor extends ASTVisitor {
 	private int methodInvocationDepth = 1;
 
 	JTryStatement rootTry;
-	MethodInvocation currentMethod;
+	MethodDeclaration currentMethod;
 
-	public Visitor(JTryStatement rootTry, MethodInvocation currentMethod) {
+	public Visitor(JTryStatement rootTry, MethodDeclaration currentMethod) {
 		this.rootTry = rootTry;
 		this.currentMethod = currentMethod;
 	}
 
-	public Visitor(JTryStatement parentTry, MethodInvocation currentMethod, int methodInvocationDepth) {
+	public Visitor(JTryStatement parentTry, MethodDeclaration currentMethod, int methodInvocationDepth) {
 		this(parentTry, currentMethod);
 		this.methodInvocationDepth = methodInvocationDepth;
 	}
@@ -78,7 +78,7 @@ public class Visitor extends ASTVisitor {
 		Visitor v = new Visitor(jTry, currentMethod, methodInvocationDepth);
 		node.getBody().accept(v);
 
-		// Skip child block visits
+		// Skip child block visits ?
 		return false;//
 	}
 
@@ -147,8 +147,8 @@ public class Visitor extends ASTVisitor {
 
 		// Traverse declaration if depth is not reached
 		if (declartion != null && methodInvocationDepth < MAX_DEPTH_OF_SEARCHING_INSIDE_METHOD_INVOCATIONS) {
-			if (!node.equals(currentMethod)) {
-				Visitor visitor = new Visitor(rootTry, node, methodInvocationDepth + 1);
+			if (!declartion.equals(currentMethod)) {
+				Visitor visitor = new Visitor(rootTry, declartion, methodInvocationDepth + 1);
 				declartion.accept(visitor);
 			}
 		}
