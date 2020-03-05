@@ -1,0 +1,990 @@
+---------------DESTRUCTIVE WRAPPING--------------
+CustomCollectionType.java at Line:67 col: 2
+catch (IllegalAccessException iae) {
+  throw new MappingException("IllegalAccessException trying to instantiate custom type: " + userTypeClass.getName());
+}
+====================================================================================================================================================================
+BatchingBatchFailureTest.java at Line:69 col: 2
+catch (Exception expected) {
+  System.out.println("Caught expected exception : " + expected);
+  expected.printStackTrace(System.out);
+  try {
+    SessionImplementor sessionImplementor=(SessionImplementor)session;
+    Field field=sessionImplementor.getJdbcCoordinator().getClass().getDeclaredField("currentBatch");
+    field.setAccessible(true);
+    Batch batch=(Batch)field.get(sessionImplementor.getJdbcCoordinator());
+    if (batch == null) {
+      throw new Exception("Current batch was null");
+    }
+ else {
+      assertEquals(BatchingBatch.class,batch.getClass());
+      field=AbstractBatchImpl.class.getDeclaredField("statements");
+      field.setAccessible(true);
+      assertEquals(0,((Map)field.get(batch)).size());
+    }
+  }
+ catch (  Exception fieldException) {
+    fail("Couldn't inspect field " + fieldException.getMessage());
+  }
+}
+====================================================================================================================================================================
+JtaAwareConnectionProviderImpl.java at Line:209 col: 3
+catch (SQLException e) {
+  throw new XAException(e.toString());
+}
+====================================================================================================================================================================
+StatefulPersistenceContext.java at Line:1805 col: 2
+catch (HibernateException he) {
+  throw new InvalidObjectException(he.getMessage());
+}
+====================================================================================================================================================================
+JtaAwareConnectionProviderImpl.java at Line:191 col: 3
+catch (SQLException e) {
+  throw new XAException(e.toString());
+}
+====================================================================================================================================================================
+CustomCollectionType.java at Line:64 col: 2
+catch (InstantiationException ie) {
+  throw new MappingException("Cannot instantiate custom type: " + userTypeClass.getName());
+}
+====================================================================================================================================================================
+UnsavedValueFactory.java at Line:95 col: 3
+catch (ClassCastException cce) {
+  throw new MappingException("Bad identifier type: " + identifierType.getName());
+}
+====================================================================================================================================================================
+AbstractEntityTuplizer.java at Line:230 col: 2
+catch (ClassCastException cce) {
+  StringBuilder msg=new StringBuilder("Identifier classes must be serializable. ");
+  if (id != null) {
+    msg.append(id.getClass().getName()).append(" is not serializable. ");
+  }
+  if (cce.getMessage() != null) {
+    msg.append(cce.getMessage());
+  }
+  throw new ClassCastException(msg.toString());
+}
+====================================================================================================================================================================
+AbstractJavaTimeTypeTest.java at Line:209 col: 2
+catch (ExecutionException e) {
+  Throwable cause=e.getCause();
+  if (cause instanceof RuntimeException) {
+    throw (RuntimeException)cause;
+  }
+ else   if (cause instanceof Error) {
+    throw (Error)cause;
+  }
+ else {
+    throw new IllegalStateException("Unexpected exception while testing",cause);
+  }
+}
+====================================================================================================================================================================
+SDOGeometryValueBinder.java at Line:83 col: 2
+catch (IllegalArgumentException e) {
+  throw new HibernateException(e.getMessage());
+}
+====================================================================================================================================================================
+JPAOverriddenAnnotationReader.java at Line:1883 col: 3
+catch (IllegalArgumentException e) {
+  throw new AnnotationException(access + " is not a valid access type. Check you xml confguration.");
+}
+====================================================================================================================================================================
+UrlTypeDescriptor.java at Line:35 col: 2
+catch (MalformedURLException e) {
+  throw new HibernateException("Unable to convert string [" + string + "] to URL : "+ e);
+}
+====================================================================================================================================================================
+ProxyFactoryFactoryImpl.java at Line:79 col: 3
+catch (Throwable t) {
+  throw new HibernateException("Unable to instantiated proxy instance");
+}
+====================================================================================================================================================================
+QueryTranslatorImpl.java at Line:238 col: 2
+catch (IllegalArgumentException e) {
+  LOG.trace("Converted IllegalArgumentException",e);
+  throw new QueryException(e.getMessage(),hql);
+}
+====================================================================================================================================================================
+Collection.java at Line:149 col: 3
+catch (Exception e) {
+  throw new MappingException("Could not instantiate comparator class [" + comparatorClassName + "] for collection "+ getRole());
+}
+====================================================================================================================================================================
+OsgiJtaPlatform.java at Line:91 col: 2
+catch (Exception e) {
+  throw new TransactionException("Could not obtain transaction from OSGi services!");
+}
+====================================================================================================================================================================
+ArchiveHelper.java at Line:91 col: 2
+catch (MalformedURLException e) {
+  throw new IllegalArgumentException("Unable to determine JAR Url from " + url + ". Cause: "+ e.getMessage());
+}
+====================================================================================================================================================================
+MyEntityInstantiator.java at Line:56 col: 2
+catch (Throwable t) {
+  throw new HibernateException("could not get handle to entity-name as interface : " + t);
+}
+====================================================================================================================================================================
+ByteBuddyProxyHelper.java at Line:134 col: 2
+catch (NoSuchMethodException e) {
+  throw new HibernateException(String.format(Locale.ENGLISH,"Unable to deserialize proxy [%s, %s]; could not locate id setter method [%s] on entity class [%s]",serializableProxy.getEntityName(),serializableProxy.getId(),serializableProxy.getIdentifierSetterMethodName(),serializableProxy.getIdentifierSetterMethodClass()));
+}
+====================================================================================================================================================================
+StandardRefCursorSupport.java at Line:191 col: 3
+catch (Exception e) {
+  throw new HibernateException("Unexpected error trying to access CallableStatement#getObject(int,Class)");
+}
+====================================================================================================================================================================
+Cloneable.java at Line:80 col: 4
+catch (Throwable t) {
+  throw new HibernateException("Unable copy copy listener [" + pd.getName() + "]");
+}
+====================================================================================================================================================================
+ClassLoaderAccessImpl.java at Line:77 col: 4
+catch (ClassNotFoundException e) {
+  throw new ClassLoadingException(name);
+}
+====================================================================================================================================================================
+StandardRefCursorSupport.java at Line:91 col: 3
+catch (InvocationTargetException e) {
+  if (e.getTargetException() instanceof SQLException) {
+    throw jdbcServices.getSqlExceptionHelper().convert((SQLException)e.getTargetException(),"Error extracting REF_CURSOR parameter [" + position + "]");
+  }
+ else {
+    throw new HibernateException("Unexpected error extracting REF_CURSOR parameter [" + position + "]",e.getTargetException());
+  }
+}
+====================================================================================================================================================================
+BlobProxy.java at Line:73 col: 2
+catch (IOException ioe) {
+  throw new SQLException("could not reset reader");
+}
+====================================================================================================================================================================
+AbstractSharedSessionContract.java at Line:967 col: 3
+catch (ClassLoadingException e) {
+  throw new AssertionFailure("Unable to load class [" + entityClassName + "] declared on named native query ["+ namedQueryDefinition.getName()+ "]");
+}
+====================================================================================================================================================================
+CollectionType.java at Line:558 col: 2
+catch (ClassCastException cce) {
+  throw new MappingException("collection role is not queryable " + role);
+}
+====================================================================================================================================================================
+JTASessionContext.java at Line:101 col: 3
+catch (Throwable t) {
+  try {
+    currentSession.close();
+  }
+ catch (  Throwable ignore) {
+    LOG.debug("Unable to release generated current-session on failed synch registration",ignore);
+  }
+  throw new HibernateException("Unable to register cleanup Synchronization with TransactionManager");
+}
+====================================================================================================================================================================
+EnversRunner.java at Line:65 col: 3
+catch (ClassCastException e) {
+  throw new Exception(String.format("%s.%s() must return a Collection of arrays.",getTestClass().getName(),getParametersMethod(getTestClass()).getName()));
+}
+====================================================================================================================================================================
+ScanningCoordinator.java at Line:162 col: 4
+catch (NoSuchMethodException e) {
+  try {
+    final Constructor<? extends Scanner> constructor=scannerImplClass.getConstructor();
+    try {
+      return constructor.newInstance();
+    }
+ catch (    Exception e2) {
+      throw new IllegalStateException("Error trying to instantiate custom specified Scanner [" + scannerImplClass.getName() + "]",e2);
+    }
+  }
+ catch (  NoSuchMethodException ignore) {
+    throw new IllegalArgumentException("Configuration named a custom Scanner, but we were unable to locate " + "an appropriate constructor");
+  }
+}
+====================================================================================================================================================================
+LocalXsdResolver.java at Line:110 col: 2
+catch (IOException e) {
+  throw new XsdException("Stream error handling schema url [" + url.toExternalForm() + "]",schemaResourceName);
+}
+====================================================================================================================================================================
+ScriptTargetOutputToStdout.java at Line:48 col: 3
+catch (IOException e) {
+  throw new SchemaManagementException("Unable to close file writer : " + e.toString());
+}
+====================================================================================================================================================================
+TestClassMetadata.java at Line:207 col: 2
+catch (InvocationTargetException e) {
+  throw new CallbackException(callback,e.getTargetException());
+}
+====================================================================================================================================================================
+GraphParser.java at Line:42 col: 2
+catch (RecognitionException|TokenStreamException e) {
+  throw new InvalidGraphException("Error parsing graph string");
+}
+====================================================================================================================================================================
+BmtSfStatefulBean.java at Line:62 col: 3
+catch (Exception e1) {
+  throw new RuntimeException("Unable to rollback JTA transaction via UserTransaction",e);
+}
+====================================================================================================================================================================
+SimpleConvertsAnnotationTest.java at Line:94 col: 3
+catch (MalformedURLException e) {
+  throw new IllegalArgumentException("Could not convert incoming value to URL : " + dbData);
+}
+====================================================================================================================================================================
+StandardRefCursorSupport.java at Line:188 col: 3
+catch (NoSuchMethodException e) {
+  throw new HibernateException("CallableStatement class does not define getObject(int,Class) method");
+}
+====================================================================================================================================================================
+JoinedSubclassEntityPersister.java at Line:539 col: 7
+catch (ClassCastException cce) {
+  throw new MappingException("Illegal discriminator type: " + discriminatorType.getName());
+}
+====================================================================================================================================================================
+SessionImpl.java at Line:3638 col: 2
+catch (TransactionRequiredForJoinException e) {
+  throw new TransactionRequiredException(e.getMessage());
+}
+====================================================================================================================================================================
+AuxiliaryDatabaseObjectBinder.java at Line:43 col: 3
+catch (Exception e) {
+  throw new org.hibernate.boot.MappingException(String.format("Unable to instantiate custom AuxiliaryDatabaseObject class [%s]",auxDbObjectImplClass),context.getOrigin());
+}
+====================================================================================================================================================================
+CollectionBinder.java at Line:683 col: 3
+catch (Exception e) {
+  throw new AnnotationException(String.format("Could not instantiate comparator class [%s] for %s",comparatorClass.getName(),safeCollectionRole()));
+}
+====================================================================================================================================================================
+JaxbCfgProcessor.java at Line:182 col: 2
+catch (IOException e) {
+  throw new XsdException("Stream error handling schema url [" + url.toExternalForm() + "]",schemaName);
+}
+====================================================================================================================================================================
+AbstractFieldSerialForm.java at Line:39 col: 2
+catch (NoSuchFieldException e) {
+  throw new PropertyAccessSerializationException("Unable to resolve field on deserialization : " + declaringClass.getName() + "#"+ fieldName);
+}
+====================================================================================================================================================================
+JBossAppServerJtaPlatform.java at Line:59 col: 3
+catch (JndiException jndiExceptionInner) {
+  throw new JndiException("unable to find UserTransaction",jndiException);
+}
+====================================================================================================================================================================
+JpaCompliantLifecycleStrategy.java at Line:111 col: 3
+catch (Exception e) {
+  throw new IllegalStateException(new NotYetReadyException(e));
+}
+====================================================================================================================================================================
+JarFileBasedArchiveDescriptor.java at Line:119 col: 5
+catch (IOException e) {
+  throw new ArchiveException(String.format("Unable to access stream from jar file [%s] for entry [%s]",jarFile.getName(),zipEntry.getName()));
+}
+
+JPAMetadataProvider.java at Line:126 col: 5
+catch (ClassLoadingException e) {
+  throw new IllegalStateException("Default entity listener class not found: " + className);
+}
+====================================================================================================================================================================
+UrlInputStreamAccess.java at Line:35 col: 2
+catch (Exception e) {
+  throw new HibernateException("Could not open url stream : " + url.toExternalForm());
+}
+====================================================================================================================================================================
+XMLContext.java at Line:138 col: 3
+catch (IllegalArgumentException e) {
+  throw new AnnotationException("Invalid access type " + access + " (check your xml configuration)");
+}
+====================================================================================================================================================================
+QueryTranslatorImpl.java at Line:232 col: 2
+catch (ANTLRException e) {
+  LOG.trace("Converted antlr.ANTLRException",e);
+  throw new QueryException(e.getMessage(),hql);
+}
+====================================================================================================================================================================
+ForeignGenerator.java at Line:110 col: 2
+catch (TransientObjectException toe) {
+  if (LOG.isDebugEnabled()) {
+    LOG.debugf("ForeignGenerator detected a transient entity [%s]",foreignValueSourceType.getAssociatedEntityName());
+  }
+  if (sessionImplementor instanceof Session) {
+    id=((Session)sessionImplementor).save(foreignValueSourceType.getAssociatedEntityName(),associatedObject);
+  }
+ else   if (sessionImplementor instanceof StatelessSession) {
+    id=((StatelessSession)sessionImplementor).insert(foreignValueSourceType.getAssociatedEntityName(),associatedObject);
+  }
+ else {
+    throw new IdentifierGenerationException("sessionImplementor is neither Session nor StatelessSession");
+  }
+}
+====================================================================================================================================================================
+AbstractEntityPersister.java at Line:2579 col: 2
+catch (StaleStateException e) {
+  if (!isNullableTable(tableNumber)) {
+    final StatisticsImplementor statistics=getFactory().getStatistics();
+    if (statistics.isStatisticsEnabled()) {
+      statistics.optimisticFailure(getEntityName());
+    }
+    throw new StaleObjectStateException(getEntityName(),id);
+  }
+  return false;
+}
+====================================================================================================================================================================
+GetterMethodImpl.java at Line:129 col: 3
+catch (NoSuchMethodException e) {
+  throw new PropertyAccessSerializationException("Unable to resolve getter method on deserialization : " + declaringClass.getName() + "#"+ methodName);
+}
+====================================================================================================================================================================
+TypeSafeActivator.java at Line:541 col: 6
+catch (ClassCastException e) {
+  throw new IntegrationException(String.format(Locale.ENGLISH,"ValidatorFactory reference (provided via `%s` setting) was not castable to %s : %s",FACTORY_PROPERTY,ValidatorFactory.class.getName(),value.getClass().getName()));
+}
+====================================================================================================================================================================
+OracleTypesHelper.java at Line:61 col: 3
+catch (ClassNotFoundException e2) {
+  throw new HibernateException(String.format("Unable to locate OracleTypes class using either known FQN [%s, %s]",ORACLE_TYPES_CLASS_NAME,DEPRECATED_ORACLE_TYPES_CLASS_NAME),e);
+}
+====================================================================================================================================================================
+AbstractEntityPersister.java at Line:2589 col: 2
+catch (TooManyRowsAffectedException e) {
+  throw new HibernateException("Duplicate identifier in table for: " + MessageHelper.infoString(this,id,getFactory()));
+}
+====================================================================================================================================================================
+ValidationMode.java at Line:57 col: 3
+catch (IllegalArgumentException e) {
+  throw new HibernateException("Unknown validation mode in " + BeanValidationIntegrator.MODE_PROPERTY + ": "+ modeProperty);
+}
+====================================================================================================================================================================
+Ejb3JoinColumn.java at Line:850 col: 4
+catch (MappingException me) {
+  throw new MappingException("Unable to find column with logical name: " + logicalReferencedColumnName + " in "+ matchingTable.getName());
+}
+====================================================================================================================================================================
+EnhancedGetterMethodImpl.java at Line:163 col: 3
+catch (NoSuchFieldException e) {
+  throw new PropertyAccessSerializationException("Unable to resolve field on deserialization : " + declaringClass.getName() + "#"+ propertyName);
+}
+====================================================================================================================================================================
+SingleTableEntityPersister.java at Line:425 col: 5
+catch (ClassCastException cce) {
+  throw new MappingException("Illegal discriminator type: " + discriminatorType.getName());
+}
+====================================================================================================================================================================
+ListenerCallback.java at Line:38 col: 2
+catch (InvocationTargetException e) {
+  if (e.getTargetException() instanceof RuntimeException) {
+    throw (RuntimeException)e.getTargetException();
+  }
+ else {
+    throw new RuntimeException(e.getTargetException());
+  }
+}
+====================================================================================================================================================================
+JBossAppServerJtaPlatform.java at Line:44 col: 3
+catch (JndiException jndiExceptionInner) {
+  throw new JndiException("unable to find transaction manager",jndiException);
+}
+====================================================================================================================================================================
+BmtEmfStatefulBean.java at Line:54 col: 3
+catch (Exception e1) {
+  throw new RuntimeException("Unable to rollback JTA transaction via UserTransaction",e);
+}
+====================================================================================================================================================================
+BinderHelper.java at Line:975 col: 4
+catch (ClassCastException cce) {
+  throw new MappingException("metaType was not a DiscriminatorType: " + metaType.getName());
+}
+====================================================================================================================================================================
+StandardRefCursorSupport.java at Line:209 col: 3
+catch (Exception e) {
+  throw new HibernateException("Unexpected error trying to access CallableStatement#getObject(String,Class)");
+}
+====================================================================================================================================================================
+JoinedSubclassEntityPersister.java at Line:174 col: 5
+catch (ClassCastException cce) {
+  throw new MappingException("Illegal discriminator type: " + discriminatorType.getName());
+}
+====================================================================================================================================================================
+StandardJaccServiceImpl.java at Line:86 col: 2
+catch (Exception e) {
+  throw new IntegrationException("Unable to access JACC PolicyConfiguration");
+}
+====================================================================================================================================================================
+JtaAwareConnectionProviderImpl.java at Line:135 col: 2
+catch (SystemException e) {
+  throw new IllegalStateException("Could not locate current transaction");
+}
+====================================================================================================================================================================
+AliasToBeanResultTransformer.java at Line:85 col: 2
+catch (IllegalAccessException e) {
+  throw new HibernateException("Could not instantiate resultclass: " + resultClass.getName());
+}
+====================================================================================================================================================================
+QueryTranslatorImpl.java at Line:465 col: 2
+catch (ClassCastException cce) {
+  throw new QueryException("collection role is not queryable: " + role);
+}
+====================================================================================================================================================================
+DdlTransactionIsolatorJtaImpl.java at Line:102 col: 3
+catch (Exception e) {
+  throw new HibernateException("Unable to resume JTA transaction after DDL execution");
+}
+====================================================================================================================================================================
+PersistenceUtilHelper.java at Line:304 col: 3
+catch (InvocationTargetException e) {
+  throw new AttributeExtractionException("Unable to access attribute (method): " + method.getDeclaringClass().getName() + "#"+ name,e.getCause());
+}
+====================================================================================================================================================================
+QueryTranslatorImpl.java at Line:456 col: 2
+catch (Exception e) {
+  throw new QueryException("persistent class not found: " + entityName);
+}
+====================================================================================================================================================================
+ArchiveHelper.java at Line:115 col: 2
+catch (MalformedURLException e) {
+  try {
+    jarUrl=new URL("file:" + jarPath);
+  }
+ catch (  MalformedURLException ee) {
+    throw new IllegalArgumentException("Unable to find jar:" + jarPath,ee);
+  }
+}
+====================================================================================================================================================================
+BeanInfoHelper.java at Line:60 col: 3
+catch (InvocationTargetException e) {
+  throw new BeanIntrospectionException("Error delegating bean info use",e.getTargetException());
+}
+====================================================================================================================================================================
+BeanInfoHelper.java at Line:88 col: 3
+catch (InvocationTargetException e) {
+  throw new BeanIntrospectionException("Error delegating bean info use",e.getTargetException());
+}
+====================================================================================================================================================================
+DynamicInstantiator.java at Line:57 col: 2
+catch (Throwable t) {
+  throw new HibernateException("could not get handle to entity-name as interface : " + t);
+}
+====================================================================================================================================================================
+EnhancedGetterMethodImpl.java at Line:151 col: 3
+catch (NoSuchMethodException e) {
+  throw new PropertyAccessSerializationException("Unable to resolve getter method on deserialization : " + declaringClass.getName() + "#"+ methodName);
+}
+====================================================================================================================================================================
+ConfigLoader.java at Line:83 col: 2
+catch (FileNotFoundException e) {
+  throw new ConfigurationException("Specified cfg.xml file [" + cfgXmlFile.getAbsolutePath() + "] does not exist");
+}
+====================================================================================================================================================================
+MappingBinder.java at Line:73 col: 3
+catch (JpaOrmXmlEventReader.BadVersionException e) {
+  throw new UnsupportedOrmXsdVersionException(e.getRequestedVersion(),origin);
+}
+====================================================================================================================================================================
+TypeSafeActivator.java at Line:518 col: 2
+catch (ClassCastException e) {
+  throw new IntegrationException(String.format(Locale.ENGLISH,"ValidatorFactory reference (provided via %s) was not castable to %s : %s",SessionFactoryOptions.class.getName(),ValidatorFactory.class.getName(),validatorFactoryReference.getClass().getName()));
+}
+====================================================================================================================================================================
+SessionFactoryHelper.java at Line:192 col: 2
+catch (Exception e) {
+  throw new QueryException("collection not found: " + role);
+}
+====================================================================================================================================================================
+ScriptTargetOutputToUrl.java at Line:64 col: 2
+catch (IOException e) {
+  throw new SchemaManagementException("Unable to close file writer : " + e.toString());
+}
+====================================================================================================================================================================
+MultiTenantConnectionProviderInitiator.java at Line:76 col: 4
+catch (ClassLoadingException cle) {
+  log.warn("Unable to locate specified class [" + className + "]",cle);
+  throw new ServiceException("Unable to locate specified multi-tenant connection provider [" + className + "]");
+}
+====================================================================================================================================================================
+HqlSqlWalker.java at Line:974 col: 5
+catch (Throwable t) {
+  throw new QueryException("could not determine seed value for version on bulk insert [" + versionType + "]");
+}
+====================================================================================================================================================================
+SingleTableEntityPersister.java at Line:331 col: 4
+catch (ClassCastException cce) {
+  throw new MappingException("Illegal discriminator type: " + discriminatorType.getName());
+}
+====================================================================================================================================================================
+MyEntityInstantiator.java at Line:68 col: 2
+catch (Throwable t) {
+  throw new HibernateException("could not get handle to entity-name as interface : " + t);
+}
+====================================================================================================================================================================
+QueryTranslatorImpl.java at Line:468 col: 2
+catch (Exception e) {
+  throw new QueryException("collection role not found: " + role);
+}
+====================================================================================================================================================================
+StandardRefCursorSupport.java at Line:125 col: 3
+catch (InvocationTargetException e) {
+  if (e.getTargetException() instanceof SQLException) {
+    throw jdbcServices.getSqlExceptionHelper().convert((SQLException)e.getTargetException(),"Error extracting REF_CURSOR parameter [" + name + "]");
+  }
+ else {
+    throw new HibernateException("Unexpected error extracting REF_CURSOR parameter [" + name + "]",e.getTargetException());
+  }
+}
+====================================================================================================================================================================
+UnsavedValueFactory.java at Line:98 col: 3
+catch (Exception e) {
+  throw new MappingException("Could not parse identifier unsaved-value: " + unsavedValue);
+}
+====================================================================================================================================================================
+ByteBuddyProxyHelper.java at Line:108 col: 2
+catch (NoSuchMethodException e) {
+  throw new HibernateException(String.format(Locale.ENGLISH,"Unable to deserialize proxy [%s, %s]; could not locate id getter method [%s] on entity class [%s]",serializableProxy.getEntityName(),serializableProxy.getId(),serializableProxy.getIdentifierGetterMethodName(),serializableProxy.getIdentifierGetterMethodClass()));
+}
+====================================================================================================================================================================
+SpatialFunctionalTestCase.java at Line:56 col: 2
+catch (BatchUpdateException e) {
+  throw new RuntimeException(e.getNextException());
+}
+====================================================================================================================================================================
+LocalSchemaLocator.java at Line:74 col: 2
+catch (IOException e) {
+  throw new XmlInfrastructureException("Stream error handling schema url [" + schemaUrl.toExternalForm() + "]");
+}
+====================================================================================================================================================================
+BeanValidationIntegrator.java at Line:133 col: 4
+catch (InvocationTargetException e) {
+  if (HibernateException.class.isInstance(e.getTargetException())) {
+    throw ((HibernateException)e.getTargetException());
+  }
+  throw new IntegrationException("Error activating Bean Validation integration",e.getTargetException());
+}
+====================================================================================================================================================================
+EnhancingClassTransformerImpl.java at Line:46 col: 2
+catch (final Exception e) {
+  throw new IllegalClassFormatException("Error performing enhancement of " + className){
+    @Override public synchronized Throwable getCause(){
+      return e;
+    }
+  }
+;
+}
+====================================================================================================================================================================
+Custom.java at Line:21 col: 2
+catch (CloneNotSupportedException cnse) {
+  throw new RuntimeException();
+}
+====================================================================================================================================================================
+AbstractAttribute.java at Line:109 col: 2
+catch (Exception e) {
+  throw new IllegalStateException("Unable to locate member [" + memberDeclaringClassName + "#"+ memberName+ "]");
+}
+====================================================================================================================================================================
+ExplodedArchiveDescriptor.java at Line:162 col: 4
+catch (IOException e) {
+  throw new ArchiveException(String.format("Unable to access stream from jar file [%s] for entry [%s]",jarFile.getName(),zipEntry.getName()));
+}
+====================================================================================================================================================================
+EntityTuplizerFactory.java at Line:65 col: 2
+catch (ClassNotFoundException e) {
+  throw new HibernateException("Could not locate specified tuplizer class [" + tuplizerClassName + "]");
+}
+====================================================================================================================================================================
+EntityCopyObserverFactoryInitiator.java at Line:91 col: 3
+catch (Exception e) {
+  throw new HibernateException("Could not instantiate class of type " + value.getName());
+}
+====================================================================================================================================================================
+BytecodeProviderImpl.java at Line:253 col: 2
+catch (NoSuchMethodException e) {
+  throw new BulkAccessorException("cannot find an accessor",index);
+}
+====================================================================================================================================================================
+AssignmentSpecification.java at Line:114 col: 3
+catch (Throwable t) {
+  throw new QueryException("cannot interpret set-clause assignment");
+}
+====================================================================================================================================================================
+JavassistProxyFactory.java at Line:211 col: 2
+catch (NoSuchMethodException e) {
+  throw new HibernateException(String.format(Locale.ENGLISH,"Unable to deserialize proxy [%s, %s]; could not locate id setter method [%s] on entity class [%s]",serializableProxy.getEntityName(),serializableProxy.getId(),serializableProxy.getIdentifierSetterMethodName(),serializableProxy.getIdentifierSetterMethodClass()));
+}
+====================================================================================================================================================================
+CollectionBinder.java at Line:1369 col: 3
+catch (MappingException e) {
+  throw new AnnotationException("mappedBy reference an unknown target entity property: " + collType + "."+ joinColumns[0].getMappedBy()+ " in "+ collValue.getOwnerEntityName()+ "."+ joinColumns[0].getPropertyName());
+}
+====================================================================================================================================================================
+ScanningCoordinator.java at Line:176 col: 5
+catch (NoSuchMethodException ignore) {
+  throw new IllegalArgumentException("Configuration named a custom Scanner, but we were unable to locate " + "an appropriate constructor");
+}
+====================================================================================================================================================================
+DynamicInstantiator.java at Line:47 col: 8
+catch (Throwable t) {
+  throw new HibernateException("could not get handle to entity as interface : " + t);
+}
+====================================================================================================================================================================
+PersisterFactoryImpl.java at Line:106 col: 3
+catch (InvocationTargetException e) {
+  Throwable target=e.getTargetException();
+  if (target instanceof HibernateException) {
+    throw (HibernateException)target;
+  }
+ else {
+    throw new MappingException("Could not instantiate persister " + persisterClass.getName(),target);
+  }
+}
+====================================================================================================================================================================
+StandardRefCursorSupport.java at Line:206 col: 3
+catch (NoSuchMethodException e) {
+  throw new HibernateException("CallableStatement class does not define getObject(String,Class) method");
+}
+====================================================================================================================================================================
+PersistentClass.java at Line:497 col: 2
+catch (MappingException e) {
+  throw new MappingException("property [" + propertyPath + "] not found on entity ["+ getEntityName()+ "]");
+}
+====================================================================================================================================================================
+DdlTransactionIsolatorJtaImpl.java at Line:54 col: 2
+catch (SystemException e) {
+  throw new HibernateException("Unable to suspend current JTA transaction in preparation for DDL execution");
+}
+====================================================================================================================================================================
+ParameterParser.java at Line:194 col: 6
+catch (NumberFormatException e) {
+  throw new QueryException("JPA-style positional param was not an integral ordinal");
+}
+====================================================================================================================================================================
+SimpleConvertAnnotationTest.java at Line:93 col: 3
+catch (MalformedURLException e) {
+  throw new IllegalArgumentException("Could not convert incoming value to URL : " + dbData);
+}
+====================================================================================================================================================================
+HCANNHelper.java at Line:59 col: 2
+catch (InvocationTargetException e) {
+  throw new AssertionFailure("Could not resolve member signature from XProperty reference",e.getCause());
+}
+====================================================================================================================================================================
+SetterMethodImpl.java at Line:153 col: 3
+catch (NoSuchMethodException e) {
+  throw new PropertyAccessSerializationException("Unable to resolve setter method on deserialization : " + declaringClass.getName() + "#"+ methodName+ "("+ argumentType.getName()+ ")");
+}
+====================================================================================================================================================================
+JCacheRegionFactory.java at Line:280 col: 2
+catch (InstantiationException|IllegalAccessException e) {
+  throw new CacheException("Could not use explicit CacheManager : " + setting);
+}
+====================================================================================================================================================================
+JPAOverriddenAnnotationReader.java at Line:3034 col: 3
+catch (NumberFormatException e) {
+  throw new AnnotationException(element.getPath() + attributeName + " not parseable: "+ attribute+ " ("+ SCHEMA_VALIDATION+ ")");
+}
+====================================================================================================================================================================
+ScanningCoordinator.java at Line:139 col: 4
+catch (NoSuchMethodException e) {
+  throw new IllegalArgumentException("Configuration named a custom Scanner and a custom ArchiveDescriptorFactory, but " + "Scanner impl did not define a constructor accepting ArchiveDescriptorFactory");
+}
+====================================================================================================================================================================
+AbstractEmptinessExpression.java at Line:84 col: 2
+catch (Exception e) {
+  throw new QueryException("collection role not found: " + role);
+}
+====================================================================================================================================================================
+JTSGeometryJavaTypeDescriptor.java at Line:51 col: 2
+catch (ParseException e) {
+  throw new RuntimeException(String.format("Can't parse string %s as WKT",string));
+}
+====================================================================================================================================================================
+ReflectHelper.java at Line:280 col: 2
+catch (NoSuchMethodException nme) {
+  throw new PropertyNotFoundException("Object class [" + clazz.getName() + "] must declare a default (no-argument) constructor");
+}
+====================================================================================================================================================================
+FastClass.java at Line:79 col: 2
+catch (ArrayIndexOutOfBoundsException e) {
+  throw new IllegalArgumentException("Cannot find matching method/constructor");
+}
+====================================================================================================================================================================
+AbstractLazyInitializer.java at Line:231 col: 3
+catch (Exception e) {
+  LOG.error("Initialization failure [" + entityName + "#"+ id+ "]",e);
+  throw new LazyInitializationException(e.getMessage());
+}
+====================================================================================================================================================================
+AbstractEmptinessExpression.java at Line:81 col: 2
+catch (ClassCastException cce) {
+  throw new QueryException("collection role is not queryable: " + role);
+}
+====================================================================================================================================================================
+SessionFactoryHelper.java at Line:218 col: 2
+catch (Exception e) {
+  throw new QueryException("collection role not found: " + role);
+}
+====================================================================================================================================================================
+SessionFactoryHelper.java at Line:189 col: 2
+catch (ClassCastException cce) {
+  throw new QueryException("collection is not queryable: " + role);
+}
+====================================================================================================================================================================
+SqlASTFactory.java at Line:222 col: 2
+catch (Exception e) {
+  throw new IllegalArgumentException("Invalid class or can't make instance, " + className);
+}
+====================================================================================================================================================================
+ScriptTargetOutputToFile.java at Line:65 col: 3
+catch (IOException e) {
+  throw new SchemaManagementException("Unable to close file writer : " + e.toString());
+}
+====================================================================================================================================================================
+FromElementType.java at Line:350 col: 4
+catch (SemanticException e) {
+  throw new QueryException("Unable to locate persister for subclass named in TREAT-AS : " + treatAsSubclassName);
+}
+====================================================================================================================================================================
+EhcacheRegionFactory.java at Line:334 col: 2
+catch (InstantiationException|IllegalAccessException e) {
+  throw new CacheException("Could not use explicit CacheManager : " + setting);
+}
+====================================================================================================================================================================
+HqlSqlWalker.java at Line:520 col: 2
+catch (Exception e) {
+  throw new SemanticException(e.getMessage());
+}
+====================================================================================================================================================================
+MultiTenantConnectionProviderInitiator.java at Line:85 col: 3
+catch (Exception e) {
+  log.warn("Unable to instantiate specified class [" + implClass.getName() + "]",e);
+  throw new ServiceException("Unable to instantiate specified multi-tenant connection provider [" + implClass.getName() + "]");
+}
+====================================================================================================================================================================
+JndiServiceImpl.java at Line:154 col: 2
+catch (Exception initialException) {
+  if (name.size() == 1) {
+    throw new JndiException("Error performing bind [" + name + "]",initialException);
+  }
+  Context intermediateContextBase=context;
+  while (name.size() > 1) {
+    final String intermediateContextName=name.get(0);
+    Context intermediateContext=null;
+    try {
+      LOG.tracev("Intermediate lookup: {0}",intermediateContextName);
+      intermediateContext=(Context)intermediateContextBase.lookup(intermediateContextName);
+    }
+ catch (    NameNotFoundException handledBelow) {
+    }
+catch (    NamingException e) {
+      throw new JndiException("Unanticipated error doing intermediate lookup",e);
+    }
+    if (intermediateContext != null) {
+      LOG.tracev("Found intermediate context: {0}",intermediateContextName);
+    }
+ else {
+      LOG.tracev("Creating sub-context: {0}",intermediateContextName);
+      try {
+        intermediateContext=intermediateContextBase.createSubcontext(intermediateContextName);
+      }
+ catch (      NamingException e) {
+        throw new JndiException("Error creating intermediate context [" + intermediateContextName + "]",e);
+      }
+    }
+    intermediateContextBase=intermediateContext;
+    name=name.getSuffix(1);
+  }
+  LOG.tracev("Binding : {0}",name);
+  try {
+    intermediateContextBase.rebind(name,value);
+  }
+ catch (  NamingException e) {
+    throw new JndiException("Error performing intermediate bind [" + name + "]",e);
+  }
+}
+====================================================================================================================================================================
+AbstractProducedQuery.java at Line:710 col: 4
+catch (HibernateException e) {
+  throw new QueryParameterException("could not locate parameter at position [" + position + "]");
+}
+====================================================================================================================================================================
+ClassTypeDescriptor.java at Line:36 col: 2
+catch (ClassNotFoundException e) {
+  throw new HibernateException("Unable to locate named class " + string);
+}
+====================================================================================================================================================================
+Cloneable.java at Line:138 col: 2
+catch (Throwable t) {
+  throw new HibernateException("Unable to validate listener config");
+}
+====================================================================================================================================================================
+FumTest.java at Line:910 col: 2
+catch (ClassNotFoundException cnfe) {
+  throw new IOException("Unable to locate class on reconstruction");
+}
+====================================================================================================================================================================
+BulkAccessorFactory.java at Line:419 col: 2
+catch (NoSuchMethodException e) {
+  throw new BulkAccessorException("cannot find an accessor",index);
+}
+====================================================================================================================================================================
+AliasToBeanResultTransformer.java at Line:82 col: 2
+catch (InstantiationException e) {
+  throw new HibernateException("Could not instantiate resultclass: " + resultClass.getName());
+}
+====================================================================================================================================================================
+ClassLoadingStrategyHelper.java at Line:46 col: 3
+catch (InvocationTargetException exception) {
+  if (exception.getCause() instanceof IllegalAccessException) {
+    return new ClassLoadingStrategy.ForUnsafeInjection(originalClass.getProtectionDomain());
+  }
+ else {
+    throw new HibernateException(LOG.bytecodeEnhancementFailed(originalClass.getName()),exception.getCause());
+  }
+}
+====================================================================================================================================================================
+SessionImpl.java at Line:2031 col: 4
+catch (HibernateException e) {
+  throw new IllegalArgumentException("Not an entity [" + entityName + "] : "+ object);
+}
+====================================================================================================================================================================
+MethodWriter.java at Line:65 col: 3
+catch (CannotCompileException ignored) {
+  String msg=String.format("Could not enhance class [%s] to add method [%s] for field [%s]",target.getName(),name,field);
+  throw new EnhancementException(msg,cce);
+}
+====================================================================================================================================================================
+OneToOneSecondPass.java at Line:158 col: 3
+catch (MappingException e) {
+  throw new AnnotationException("Unknown mappedBy in: " + StringHelper.qualify(ownerEntity,ownerProperty) + ", referenced property unknown: "+ StringHelper.qualify(value.getReferencedEntityName(),mappedBy));
+}
+====================================================================================================================================================================
+CdiBeanContainerBuilder.java at Line:74 col: 3
+catch (InvocationTargetException e) {
+  throw new HibernateException("Problem building " + containerClass.getName(),e.getCause());
+}
+====================================================================================================================================================================
+LocalSchema.java at Line:103 col: 2
+catch (IOException e) {
+  throw new XmlInfrastructureException("Stream error handling schema url [" + schemaUrl.toExternalForm() + "]");
+}
+====================================================================================================================================================================
+JPAOverriddenAnnotationReader.java at Line:1677 col: 3
+catch (IllegalArgumentException e) {
+  throw new AnnotationException(access + " is not a valid access type. Check you xml confguration.");
+}
+====================================================================================================================================================================
+BaseUnitTestCase.java at Line:94 col: 2
+catch (ExecutionException e) {
+  throw new RuntimeException(e.getCause());
+}
+====================================================================================================================================================================
+HqlSqlWalker.java at Line:1483 col: 2
+catch (Throwable t) {
+  throw new SemanticException("node did not reference a map");
+}
+====================================================================================================================================================================
+ComponentTuplizerFactory.java at Line:85 col: 2
+catch (ClassLoadingException e) {
+  throw new HibernateException("Could not locate specified tuplizer class [" + tuplizerClassName + "]");
+}
+====================================================================================================================================================================
+SessionFactoryHelper.java at Line:215 col: 2
+catch (ClassCastException cce) {
+  throw new QueryException("collection role is not queryable: " + role);
+}
+====================================================================================================================================================================
+AccessType.java at Line:80 col: 2
+catch (IllegalArgumentException e) {
+  throw new UnknownAccessTypeException(externalName);
+}
+====================================================================================================================================================================
+Dialect.java at Line:305 col: 2
+catch (ClassNotFoundException cnfe) {
+  throw new HibernateException("Dialect class not found: " + dialectName);
+}
+====================================================================================================================================================================
+PersisterFactoryImpl.java at Line:161 col: 3
+catch (InvocationTargetException e) {
+  Throwable target=e.getTargetException();
+  if (target instanceof HibernateException) {
+    throw (HibernateException)target;
+  }
+ else {
+    throw new MappingException("Could not instantiate collection persister " + persisterClass.getName(),target);
+  }
+}
+====================================================================================================================================================================
+ScriptSourceInputFromUrl.java at Line:61 col: 2
+catch (IOException e) {
+  throw new SchemaManagementException("Unable to open specified script source url [" + url + "] for reading");
+}
+====================================================================================================================================================================
+EntityCallback.java at Line:35 col: 2
+catch (InvocationTargetException e) {
+  if (e.getTargetException() instanceof RuntimeException) {
+    throw (RuntimeException)e.getTargetException();
+  }
+ else {
+    throw new RuntimeException(e.getTargetException());
+  }
+}
+====================================================================================================================================================================
+JavassistProxyFactory.java at Line:185 col: 2
+catch (NoSuchMethodException e) {
+  throw new HibernateException(String.format(Locale.ENGLISH,"Unable to deserialize proxy [%s, %s]; could not locate id getter method [%s] on entity class [%s]",serializableProxy.getEntityName(),serializableProxy.getId(),serializableProxy.getIdentifierGetterMethodName(),serializableProxy.getIdentifierGetterMethodClass()));
+}
+====================================================================================================================================================================
+FastClass.java at Line:133 col: 2
+catch (ArrayIndexOutOfBoundsException e) {
+  throw new IllegalArgumentException("Cannot find matching method/constructor");
+}
+====================================================================================================================================================================
+DefaultIdentifierGeneratorFactory.java at Line:143 col: 2
+catch (ClassLoadingException e) {
+  throw new MappingException(String.format("Could not interpret id generator strategy [%s]",strategy));
+}
+====================================================================================================================================================================
+EmbeddableCallback.java at Line:40 col: 2
+catch (InvocationTargetException e) {
+  if (e.getTargetException() instanceof RuntimeException) {
+    throw (RuntimeException)e.getTargetException();
+  }
+ else {
+    throw new RuntimeException(e.getTargetException());
+  }
+}
+====================================================================================================================================================================
+MethodWriter.java at Line:92 col: 3
+catch (CannotCompileException ignored) {
+  String msg=String.format("Could not enhance class [%s] to add method [%s] for field [%s]",target.getName(),name,field);
+  throw new EnhancementException(msg,cce);
+}
+====================================================================================================================================================================
+AbstractProducedQuery.java at Line:1101 col: 2
+catch (ClassCastException e) {
+  throw new IllegalArgumentException("Value for hint");
+}
+====================================================================================================================================================================
+SessionFactoryImpl.java at Line:1064 col: 3
+catch (MappingException me) {
+  if (serializable) {
+    return type;
+  }
+ else {
+    throw new HibernateException("Could not determine a type for class: " + typename);
+  }
+}
+====================================================================================================================================================================
+CacheMode.java at Line:90 col: 2
+catch (IllegalArgumentException e) {
+  throw new MappingException("Unknown Cache Mode: " + setting);
+}
+====================================================================================================================================================================
+CollectionBinder.java at Line:837 col: 3
+catch (MappingException e) {
+  throw new AnnotationException("mappedBy reference an unknown target entity property: " + collType + "."+ this.mappedBy+ " in "+ collection.getOwnerEntityName()+ "."+ property.getName());
+}
+====================================================================================================================================================================
+EntityManagerDeserializationTest.java at Line:74 col: 2
+catch (ClassNotFoundException cnfe) {
+  throw new IOException("Unable to locate class on reconstruction");
+}
+====================================================================================================================================================================
