@@ -44,7 +44,7 @@ public class JeapHunter {
 			HashSet<CatchClause> destructiveWrappingResult = new HashSet<>();
 			ICompilationUnit[] sourceFiles = project.getSourceFiles();
 
-			UserConsole.println("Hunting " + project.getName() + "...");
+			UserConsole.println("Hunting " + project.getName() + " Anti-patterns...");
 			UserConsole.println();
 
 			if (sourceFiles.length > 0) {
@@ -175,7 +175,7 @@ public class JeapHunter {
 	private String mapCatchClauseToString(CatchClause catchClause) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(mapCompilationUnitToString((CompilationUnit) catchClause.getRoot(), catchClause.getStartPosition()));
-		// sb.append(System.lineSeparator());
+		sb.append(System.lineSeparator());
 		// sb.append(catchClause.toString());
 		return sb.toString();
 	}
