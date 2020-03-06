@@ -1,23 +1,24 @@
 package jeaphunter.entities;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CatchClause;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.TryStatement;
+import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.jdt.core.dom.UnionType;
 
 import jeaphunter.antipattern.OverCatchAntiPattern;
-import jeaphunter.util.ASTUtil;
 
 /**
  * An abstraction over Ast try statement
@@ -61,14 +62,32 @@ public class JTryStatement {
 
 	public JTryStatement(TryStatement tryStatement) {
 		this.tryStatement = tryStatement;
-		List catchClauses = tryStatement.catchClauses();
+		findCatchExceptionTypes(tryStatement);
+	}
 
+	private void findCatchExceptionTypes(TryStatement tryStatement) {
+		List catchClauses = tryStatement.catchClauses();
 		for (Object catchClause : tryStatement.catchClauses()) {
 			if (catchClause instanceof CatchClause) {
-				ITypeBinding typeBinding = ((CatchClause) catchClause).getException().getType().resolveBinding();
-				if (typeBinding != null) {
-					this.catchBlockExceptionTypes.put(typeBinding.getKey(), typeBinding);
+				ASTNode exception = ((CatchClause) catchClause).getException();
+				if (exception instanceof SingleVariableDeclaration) {
+					Type declType = ((SingleVariableDeclaration) exception).getType();
+
+					if (declType.isSimpleType()) {
+						ITypeBinding typeBinding = declType.resolveBinding();
+						if (typeBinding != null) {
+							this.catchBlockExceptionTypes.put(typeBinding.getKey(), typeBinding);
+						}
+					} else if (declType.isUnionType()) {
+						((UnionType) declType).types().forEach(obj -> {
+							ITypeBinding typeBinding = ((Type) obj).resolveBinding();
+							if (typeBinding != null) {
+								this.catchBlockExceptionTypes.put(typeBinding.getKey(), typeBinding);
+							}
+						});
+					}
 				}
+
 			}
 		}
 	}
