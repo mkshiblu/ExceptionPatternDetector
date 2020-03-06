@@ -1,16 +1,22 @@
 package jeaphunter.entities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CatchClause;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.TryStatement;
+import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.jdt.core.dom.UnionType;
 
 import jeaphunter.antipattern.OverCatchAntiPattern;
 
@@ -18,11 +24,9 @@ import jeaphunter.antipattern.OverCatchAntiPattern;
  * An abstraction over Ast try statement
  */
 public class JTryStatement {
-
-	private final List<CatchClause> catchClauses = new ArrayList<>();
 	private final List<MethodInvocation> invokedMethods = new ArrayList<>();
 	private final List<ThrowStatement> throwedStatements = new ArrayList<>();
-	
+
 	/**
 	 * Directly or deeply nested (i.e. inside a method which is invoked from this
 	 * try) try blocks
@@ -33,21 +37,20 @@ public class JTryStatement {
 	 * Holds all the throw statement exceptions excluding the ones not inside of
 	 * nested try blocks
 	 */
-	private final Set<ITypeBinding> thrownExceptionTypes = new HashSet<>();
+	private final Map<String, ITypeBinding> thrownExceptionTypes = new HashMap<>();
 
 	/**
 	 * Holds the unhandled exception propagated from inner try
 	 */
-	private final Set<ITypeBinding> propagatedExceptionsFromNestedTryStatemetns = new HashSet<>();
+	private final Map<String, ITypeBinding> propagatedExceptionsFromNestedTryStatements = new HashMap<>();
 
 	/**
 	 * Holds the binding of all the caught exception in the catch blocks of this try
 	 */
-	private final Set<ITypeBinding> catchBlockExceptionTypes = new HashSet<>();
+	private final Map<String, ITypeBinding> catchBlockExceptionTypes = new HashMap<>();
 
 	private final Set<OverCatchAntiPattern> overCatches = new HashSet<>();
 
-	
 	private Block body;
 
 	private String sourceFilePath;
@@ -59,10 +62,38 @@ public class JTryStatement {
 
 	public JTryStatement(TryStatement tryStatement) {
 		this.tryStatement = tryStatement;
+		findCatchExceptionTypes(tryStatement);
+	}
+
+	private void findCatchExceptionTypes(TryStatement tryStatement) {
+		List catchClauses = tryStatement.catchClauses();
+		for (Object catchClause : tryStatement.catchClauses()) {
+			if (catchClause instanceof CatchClause) {
+				ASTNode exception = ((CatchClause) catchClause).getException();
+				if (exception instanceof SingleVariableDeclaration) {
+					Type declType = ((SingleVariableDeclaration) exception).getType();
+
+					if (declType.isSimpleType()) {
+						ITypeBinding typeBinding = declType.resolveBinding();
+						if (typeBinding != null) {
+							this.catchBlockExceptionTypes.put(typeBinding.getKey(), typeBinding);
+						}
+					} else if (declType.isUnionType()) {
+						((UnionType) declType).types().forEach(obj -> {
+							ITypeBinding typeBinding = ((Type) obj).resolveBinding();
+							if (typeBinding != null) {
+								this.catchBlockExceptionTypes.put(typeBinding.getKey(), typeBinding);
+							}
+						});
+					}
+				}
+
+			}
+		}
 	}
 
 	public boolean equals(JTryStatement jtry) {
-		//return this.getTryStatement().equals(jtry.getTryStatement());
+		// return this.getTryStatement().equals(jtry.getTryStatement());
 		return this.hashCode() == jtry.hashCode();
 	}
 
@@ -76,32 +107,14 @@ public class JTryStatement {
 
 	@Override
 	public int hashCode() {
-		return getUniqueId().hashCode();//toString().get //this.getTryStatement()..hashCode();
+		return getUniqueId().hashCode();// toString().get //this.getTryStatement()..hashCode();
 	}
 
 	public TryStatement getTryStatement() {
 		return tryStatement;
 	}
 
-	public List<CatchClause> getCatchClauses() {
-		return catchClauses;
-	}
-
-	public void addCatchClause(CatchClause catchClause) {
-		ITypeBinding typeBinding = catchClause.getException().getType().resolveBinding();
-		if (typeBinding != null) {
-			this.catchBlockExceptionTypes.add(typeBinding);
-		}
-		this.catchClauses.add(catchClause);
-	}
-
-	public void addCatchClauses(List<CatchClause> catchClauses) {
-		for (CatchClause catchClause : catchClauses) {
-			this.addCatchClause(catchClause);
-		}
-	}
-
-	public Set<ITypeBinding> getCatchClauseExceptionTypes() {
+	public Map<String, ITypeBinding> getCatchClauseExceptionTypes() {
 		return catchBlockExceptionTypes;
 	}
 
@@ -142,7 +155,7 @@ public class JTryStatement {
 	}
 
 	public void addToThrownExceptionTypes(ITypeBinding exceptionType) {
-		this.thrownExceptionTypes.add(exceptionType);
+		this.thrownExceptionTypes.put(exceptionType.getKey(), exceptionType);
 	}
 
 	public Block getBody() {
@@ -183,7 +196,7 @@ public class JTryStatement {
 	}
 
 	public boolean hasCatchClauses() {
-		return this.catchClauses.size() > 0;
+		return this.tryStatement.catchClauses().size() > 0;
 	}
 
 	/**
@@ -202,7 +215,7 @@ public class JTryStatement {
 		return uniqueId;
 	}
 
-	public Set<ITypeBinding> getThrownExceptionTypes() {
+	public Map<String, ITypeBinding> getThrownExceptionTypes() {
 		return thrownExceptionTypes;
 	}
 
@@ -214,22 +227,24 @@ public class JTryStatement {
 		this.parentTry = parentTry;
 	}
 
-	public Set<ITypeBinding> getPropagatedExceptionsFromNestedTryStatemetns() {
-		return propagatedExceptionsFromNestedTryStatemetns;
+	public Map<String, ITypeBinding> getPropagatedExceptionsFromNestedTryStatemetns() {
+		return propagatedExceptionsFromNestedTryStatements;
 	}
 
 	public void addToPropagatedThrowsFromNestedTry(Set<ITypeBinding> thrownFromInnerTry) {
-		this.propagatedExceptionsFromNestedTryStatemetns.addAll(thrownFromInnerTry);
+		for (ITypeBinding binding : thrownFromInnerTry) {
+			this.propagatedExceptionsFromNestedTryStatements.put(binding.getKey(), binding);
+		}
 	}
-	
-	public Set<OverCatchAntiPattern> getOverCatches(){
+
+	public Set<OverCatchAntiPattern> getOverCatches() {
 		return overCatches;
 	}
-	
+
 	public void addToOverCatches(OverCatchAntiPattern oca) {
 		this.overCatches.add(oca);
 	}
-	
+
 	public boolean hasOverCatches() {
 		return overCatches.size() > 0;
 	}

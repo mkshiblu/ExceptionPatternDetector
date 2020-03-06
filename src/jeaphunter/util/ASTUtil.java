@@ -32,7 +32,7 @@ public class ASTUtil {
 	/**
 	 * Holds a map of qualified name and their superclasses
 	 */
-	private static Map<String, Set<ITypeBinding>> typeSuperClasses = new HashMap<>();
+	private static Map<String, Set<String>> typeSuperClasses = new HashMap<>();
 
 	/** this only works when the method is declared in an Eclipse project **/
 	public static MethodDeclaration declarationFromInvocation(MethodInvocation node) {
@@ -124,7 +124,7 @@ public class ASTUtil {
 	 */
 	public static boolean isSubClass(final ITypeBinding typeBinding, final ITypeBinding potentialSuperType) {
 		// Get the already calculated super types
-		Set<ITypeBinding> superTypes = typeSuperClasses.get(typeBinding.getKey());
+		Set<String> superTypes = typeSuperClasses.get(typeBinding.getKey());
 		if (superTypes != null && superTypes.contains(potentialSuperType.getKey())) {
 			return true;
 		}
@@ -139,7 +139,7 @@ public class ASTUtil {
 					superTypes = new HashSet<>();
 					typeSuperClasses.put(typeBinding.getKey(), superTypes);
 				}
-				superTypes.add(potentialSuperType);
+				superTypes.add(potentialSuperType.getKey());
 				return true;
 			}
 			currClass = superClass;

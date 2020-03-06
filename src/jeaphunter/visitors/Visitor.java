@@ -56,7 +56,7 @@ public class Visitor extends ASTVisitor {
 		// Don't process if no catch clauses?
 
 		jTry.setParentTry(rootTry);
-		jTry.addCatchClauses(node.catchClauses());
+		//jTry.addCatchClauses(node.catchClauses());
 		jTry.setBody(node.getBody());
 
 		ASTNode root = node.getRoot();

@@ -25,7 +25,7 @@ public class TryVisitor extends ASTVisitor {
 			return true;
 
 		JTryStatement jTry = new JTryStatement(node);
-		jTry.addCatchClauses(node.catchClauses());
+		//jTry.addCatchClauses(node.catchClauses());
 		jTry.setBody(node.getBody());
 
 		ASTNode root = node.getRoot();
