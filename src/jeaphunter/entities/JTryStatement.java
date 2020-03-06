@@ -1,11 +1,13 @@
 package jeaphunter.entities;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.CatchClause;
@@ -15,13 +17,12 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.core.dom.TryStatement;
 
 import jeaphunter.antipattern.OverCatchAntiPattern;
+import jeaphunter.util.ASTUtil;
 
 /**
  * An abstraction over Ast try statement
  */
 public class JTryStatement {
-
-	private final List<CatchClause> catchClauses = new ArrayList<>();
 	private final List<MethodInvocation> invokedMethods = new ArrayList<>();
 	private final List<ThrowStatement> throwedStatements = new ArrayList<>();
 
@@ -60,6 +61,16 @@ public class JTryStatement {
 
 	public JTryStatement(TryStatement tryStatement) {
 		this.tryStatement = tryStatement;
+		List catchClauses = tryStatement.catchClauses();
+
+		for (Object catchClause : tryStatement.catchClauses()) {
+			if (catchClause instanceof CatchClause) {
+				ITypeBinding typeBinding = ((CatchClause) catchClause).getException().getType().resolveBinding();
+				if (typeBinding != null) {
+					this.catchBlockExceptionTypes.put(typeBinding.getKey(), typeBinding);
+				}
+			}
+		}
 	}
 
 	public boolean equals(JTryStatement jtry) {
@@ -82,24 +93,6 @@ public class JTryStatement {
 
 	public TryStatement getTryStatement() {
 		return tryStatement;
-	}
-
-	public List<CatchClause> getCatchClauses() {
-		return catchClauses;
-	}
-
-	public void addCatchClause(CatchClause catchClause) {
-		ITypeBinding typeBinding = catchClause.getException().getType().resolveBinding();
-		if (typeBinding != null) {
-			this.catchBlockExceptionTypes.put(typeBinding.getKey(), typeBinding);
-		}
-		this.catchClauses.add(catchClause);
-	}
-
-	public void addCatchClauses(List<CatchClause> catchClauses) {
-		for (CatchClause catchClause : catchClauses) {
-			this.addCatchClause(catchClause);
-		}
 	}
 
 	public Map<String, ITypeBinding> getCatchClauseExceptionTypes() {
@@ -184,7 +177,7 @@ public class JTryStatement {
 	}
 
 	public boolean hasCatchClauses() {
-		return this.catchClauses.size() > 0;
+		return this.tryStatement.catchClauses().size() > 0;
 	}
 
 	/**
