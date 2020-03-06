@@ -8,7 +8,9 @@ A tool to detect various Java Exception Anit Patterns such as Nested Try, Destru
 2. File -> Open project from directory
 3. Project option -> Debug as Eclipse Application
 
+> If you want to use thirparty library evaluation please use the code from thirdpartylibs branch. It makes it slower.
 
+Without thirdpartylibs our tool runs on HibernateORM with more than 7000 java files and more than half a million code in 5 minutes with a cache size of 20 (Change the capacity of cache in ASTUtil.Cache class. In our findings it works better with cache size with ~50
 
 ### Exception Anti Patterns
 
