@@ -2,8 +2,10 @@ package jeaphunter.antipattern;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -54,18 +56,20 @@ public class OverCatchDetector {
 	 */
 	private Set<ITypeBinding> getUnhandledExceptions(final JTryStatement jtry) {
 		final Set<ITypeBinding> unhandled = new HashSet<>();
-		final Set<ITypeBinding> thrownExceptions = new HashSet<ITypeBinding>();
-		thrownExceptions.addAll(jtry.getThrownExceptionTypes());
-		thrownExceptions.addAll(jtry.getPropagatedExceptionsFromNestedTryStatemetns());
-		final Set<ITypeBinding> catchExceptions = jtry.getCatchClauseExceptionTypes();
+
+		final Map<String, ITypeBinding> thrownExceptions = new HashMap<>();
+		thrownExceptions.putAll(jtry.getThrownExceptionTypes());
+		thrownExceptions.putAll(jtry.getPropagatedExceptionsFromNestedTryStatemetns());
+
+		final Map<String, ITypeBinding> catchExceptions = jtry.getCatchClauseExceptionTypes();
 
 		boolean handledInCatch;
 
-		for (ITypeBinding thrownException : thrownExceptions) {
+		for (ITypeBinding thrownException : thrownExceptions.values()) {
 			handledInCatch = false;
 
 			// Check if the throwed exception was handled by the catch
-			for (ITypeBinding catchException : catchExceptions) {
+			for (ITypeBinding catchException : catchExceptions.values()) {
 				if (thrownException.isEqualTo(catchException) || ASTUtil.isSubClass(thrownException, catchException)) {
 					handledInCatch = true;
 					break;
@@ -83,7 +87,7 @@ public class OverCatchDetector {
 	private boolean hasOverCatch(final JTryStatement jtry) {
 		boolean hasOverCatch = false;
 
-		final List<ITypeBinding> sortedCatchExceptions = jtry.getCatchClauseExceptionTypes().stream()
+		final List<ITypeBinding> sortedCatchExceptions = jtry.getCatchClauseExceptionTypes().values().stream()
 				.sorted(new Comparator<ITypeBinding>() {
 					@Override
 					public int compare(ITypeBinding c1, ITypeBinding c2) {
@@ -97,15 +101,19 @@ public class OverCatchDetector {
 					}
 				}).collect(Collectors.toList());
 
-		final Set<ITypeBinding> thrownExceptions = new HashSet<ITypeBinding>();
-		thrownExceptions.addAll(jtry.getThrownExceptionTypes());
-		thrownExceptions.addAll(jtry.getPropagatedExceptionsFromNestedTryStatemetns());
+		final Map<String, ITypeBinding> thrownExceptionsMap = new HashMap<>();
+		thrownExceptionsMap.putAll(jtry.getThrownExceptionTypes());
+		thrownExceptionsMap.putAll(jtry.getPropagatedExceptionsFromNestedTryStatemetns());
+		final Set<ITypeBinding> thrownExceptions = new HashSet<>();
+		for (ITypeBinding exp : thrownExceptionsMap.values()) {
+			thrownExceptions.add(exp);
+		}
 
 		Set<ITypeBinding> caughtSubExceptions;
 		final StringBuilder subExceptionNames = new StringBuilder(); // For printing
 
 		for (final ITypeBinding catchException : sortedCatchExceptions) {
-			subExceptionNames.setLength(0); 
+			subExceptionNames.setLength(0);
 			// Find the sub exceptions caught by this catch
 			caughtSubExceptions = ASTUtil.getMatchedSubClasses(catchException, thrownExceptions);
 
@@ -168,7 +176,7 @@ public class OverCatchDetector {
 	public static Set<JTryStatement> getTryWithOverCatch() {
 		return tryWithOverCatch;
 	}
-	
+
 	public static void clear() {
 		tryWithOverCatch.clear();
 	}
