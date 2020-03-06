@@ -93,19 +93,7 @@ public class Visitor extends ASTVisitor {
 		} else {
 
 			IMethodBinding binding = node.resolveMethodBinding();
-
 			if (binding != null) {
-
-//				if (binding.getJavaElement() instanceof IMember) {
-//					IMember member = (IMember) binding.getJavaElement();
-//
-//					try {
-//						// String html = member.getAttachedJavadoc(null);
-//					} catch (Exception e) {
-//						// TODO Auto-generated catch block
-//						// e.printStackTrace();
-//					}
-//				}
 
 				IMethodBinding thridPartyDeclaration = binding.getMethodDeclaration();
 				// TODO find ejavadoc

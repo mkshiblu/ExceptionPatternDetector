@@ -9,10 +9,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMember;
 import org.eclipse.jdt.core.IMethod;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
@@ -37,17 +39,23 @@ public class ASTUtil {
 	/** this only works when the method is declared in an Eclipse project **/
 	public static MethodDeclaration declarationFromInvocation(MethodInvocation node) {
 		MethodDeclaration md = null;
+		CompilationUnit cu = null;
 		try {
 			IMethodBinding binding = node.resolveMethodBinding();
 			ICompilationUnit iunit = (ICompilationUnit) binding.getJavaElement()
 					.getAncestor(IJavaElement.COMPILATION_UNIT);
-
-			if (iunit == null) {
-				return null;
+			if (iunit != null) {
+				cu = Cache.getCompilationUnit(iunit);
+			} else {
+				IClassFile classFile = (IClassFile) binding.getJavaElement().getAncestor(IJavaElement.CLASS_FILE);
+				
+				if (classFile != null)
+					cu = Cache.getCompilationUnit(classFile);
 			}
 
-			CompilationUnit cu = Cache.getCompilationUnit(iunit);
-			md = (MethodDeclaration) cu.findDeclaringNode(binding.getKey());
+			if (cu != null) {
+				md = (MethodDeclaration) cu.findDeclaringNode(binding.getKey());
+			}
 		} catch (Exception ex) {
 			System.out.println("Cannot resolve declaration for: " + node);
 		}

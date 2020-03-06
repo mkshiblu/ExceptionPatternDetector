@@ -8,6 +8,7 @@ import java.util.Set;
 import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
@@ -69,10 +70,10 @@ public class Cache {
 			try {
 				ASTParser parser = ASTParser.newParser(AST.JLS13);
 				parser.setSource(classFile);
-				parser.setResolveBindings(true);
+				parser.setResolveBindings(resolveBinding);
 				compilationUnit = (CompilationUnit) parser.createAST(null);
 			} catch (IllegalStateException e) {
-				System.out.println("Cannot get compilation unit for classfile : " + classFile);
+				///System.out.println("Cannot get compilation unit for classfile : " + classFile);
 				unResolvedClassFiles.add(classFile);
 			}
 		}
