@@ -1,0 +1,433 @@
+---------------checkstyle-master Summary--------------
+Number of Nested Try: 16
+Number of Destructive Wrapping: 5
+Number of Over Catch: 12
+------------------------------------------------------
+---------------NESTED TRY--------------
+====================================================
+InputNestedTryDepth.java at Line:33 col: 16
+try {
+  try {
+  }
+ catch (  Exception e) {
+  }
+}
+ catch (Exception e) {
+}
+
+====================================================
+InputFinalLocalVariableAssignedMultipleTimes.java at Line:199 col: 8
+try {
+  String className;
+  int kind;
+  boolean isParameterToInitMethodofAnonymousInnerClass=false;
+  boolean isSyntheticMethod=false;
+  if (o instanceof String || o instanceof Integer) {
+    String m;
+    if (o instanceof String) {
+      m=(String)o;
+      isSyntheticMethod=m.equals("");
+      kind=1;
+      className=this.getClass().getName();
+    }
+ else     if (o instanceof String) {
+      m="";
+      isSyntheticMethod=m.equals("");
+      className=this.getClass().getName();
+      kind=2;
+      if ("<init>".equals(m.toLowerCase(Locale.getDefault()))) {
+        final int i=className.lastIndexOf('$');
+        if (i + 1 < className.length()) {
+          isParameterToInitMethodofAnonymousInnerClass=true;
+        }
+      }
+    }
+ else {
+      throw new IllegalStateException("impossible");
+    }
+    if (!m.equals("") && !"<init>".equals(m.toLowerCase(Locale.getDefault()))) {
+      final String c="className";
+      String inheritedAnnotations=new String();
+      if (c.charAt(1) > 0) {
+        n="";
+        if (n != null) {
+          inheritedAnnotations+="";
+        }
+      }
+      for (int i=5; i < 10; i++) {
+        n=new String("");
+        if (n != null) {
+          inheritedAnnotations+="";
+        }
+      }
+      if (n == null) {
+        String.CASE_INSENSITIVE_ORDER.equals("#" + inheritedAnnotations.length());
+      }
+      if (!inheritedAnnotations.isEmpty()) {
+        if (inheritedAnnotations.length() == 1) {
+          return inheritedAnnotations;
+        }
+        if (!getMinimal) {
+          return inheritedAnnotations;
+        }
+        String min=inheritedAnnotations;
+        if (min.length() == 0) {
+          inheritedAnnotations=null;
+          min=inheritedAnnotations;
+        }
+        return min;
+      }
+      if (inheritedAnnotations == null) {
+        return null;
+      }
+      if (inheritedAnnotations.equals("")) {
+        String.CASE_INSENSITIVE_ORDER.equals("l" + " defines " + m);
+      }
+    }
+  }
+ else   if (o instanceof String) {
+    className=((String)o).getClass().getName();
+    kind=3;
+  }
+ else   if (o instanceof String) {
+    assert false;
+    className=(String)o;
+    kind=4;
+  }
+ else {
+    throw new IllegalArgumentException("Can't" + o.getClass().getName());
+  }
+  if (isParameterToInitMethodofAnonymousInnerClass) {
+    return null;
+  }
+  if (isSyntheticMethod) {
+    return null;
+  }
+  try {
+    final String c=new String(className);
+    if (c != null && c.equals("")) {
+      return null;
+    }
+  }
+ catch (  Exception e) {
+    assert true;
+  }
+  n=new String(className);
+  if (n == null) {
+    String.CASE_INSENSITIVE_ORDER.equals("Default annotation for " + kind + " is "+ n);
+  }
+  if (n != null) {
+    return n;
+  }
+  n=new String(className);
+  if (n == null) {
+    String.CASE_INSENSITIVE_ORDER.equals("Default annotation for any is " + n);
+  }
+  if (n != null) {
+    return n;
+  }
+  final int p=className.lastIndexOf('.');
+  className=className.substring(0,p + 1) + "package-info";
+  n=new String(className);
+  if (n == null) {
+    String.CASE_INSENSITIVE_ORDER.equals("Default annotation for " + kind + " is "+ n);
+  }
+  if (n != null) {
+    return n;
+  }
+  n=new String(className);
+  if (n == null) {
+    String.CASE_INSENSITIVE_ORDER.equals("Default annotation for any is " + n);
+  }
+  if (n != null) {
+    return n;
+  }
+  return n;
+}
+ catch (Exception e) {
+  String.CASE_INSENSITIVE_ORDER.equals(e);
+  ;
+  return null;
+}
+
+====================================================
+InputNestedTryDepth.java at Line:21 col: 12
+try {
+  try {
+  }
+ catch (  Exception e) {
+  }
+}
+ catch (Exception e) {
+}
+
+====================================================
+InputFinalLocalVariableFalsePositives.java at Line:479 col: 8
+try {
+  int newLen;
+  if (true) {
+    try {
+      newLen=1;
+    }
+ catch (    Exception ibse) {
+    }
+  }
+ else {
+    newLen=2;
+    if (true) {
+    }
+  }
+  if (true) {
+    try {
+    }
+ catch (    Exception e) {
+    }
+  }
+  if (true) {
+    newLen=3;
+    if (true) {
+      if (true) {
+      }
+    }
+  }
+  return;
+}
+ catch (Exception e) {
+  throw new ArrayIndexOutOfBoundsException(e.toString());
+}
+
+====================================================
+InputNestedTryDepth.java at Line:32 col: 12
+try {
+  try {
+    try {
+    }
+ catch (    Exception e) {
+    }
+  }
+ catch (  Exception e) {
+  }
+}
+ catch (Exception e) {
+}
+
+====================================================
+InputSuppressionCommentFilter.java at Line:57 col: 8
+try {
+  for (int i=0; i < 10; i++) {
+    while (true) {
+      try {
+      }
+ catch (      Exception e) {
+      }
+    }
+  }
+}
+ catch (Exception ex) {
+}
+
+====================================================
+InputFinalLocalVariableFalsePositives.java at Line:2129 col: 8
+try {
+  try {
+    result="";
+    if (true) {
+      if (true) {
+      }
+    }
+  }
+ catch (  Exception e) {
+    if (true) {
+    }
+    if (true) {
+    }
+ else {
+    }
+    result="";
+  }
+}
+ catch (Exception ex) {
+}
+
+====================================================
+InputSuppressWithNearbyCommentFilter.java at Line:57 col: 8
+try {
+  for (int i=0; i < 10; i++) {
+    while (true) {
+      try {
+      }
+ catch (      Exception e) {
+      }
+catch (      Throwable t) {
+      }
+    }
+  }
+}
+ catch (Exception ex) {
+}
+
+====================================================
+InputIndentationTryWithResourcesStrict.java at Line:57 col: 8
+try {
+  try (BufferedWriter wrr=Files.newBufferedWriter(null,null)){
+    wrr.flush();
+  }
+ catch (  MalformedInputException e) {
+  }
+}
+ catch (IOException e) {
+  Integer.parseInt("1");
+}
+
+====================================================
+InputIndentationTryResourcesNotStrict.java at Line:57 col: 8
+try {
+  try (BufferedWriter wrr=Files.newBufferedWriter(null,null)){
+    wrr.flush();
+  }
+ catch (  MalformedInputException e) {
+  }
+}
+ catch (IOException e) {
+  Integer.parseInt("1");
+}
+
+====================================================
+SuppressionXpathRegressionNestedTryDepth.java at Line:5 col: 8
+try {
+  try {
+    try {
+    }
+ catch (    Exception e) {
+    }
+  }
+ catch (  Exception e) {
+  }
+}
+ catch (Exception e) {
+}
+
+====================================================
+InputFinalLocalVariable.java at Line:406 col: 8
+try {
+  x=0;
+  try {
+    x=0;
+  }
+ catch (  final Exception e) {
+    x=1;
+  }
+}
+ catch (final Exception e) {
+  x=1;
+}
+
+====================================================
+SuppressionXpathRegressionNestedTryDepth.java at Line:6 col: 12
+try {
+  try {
+  }
+ catch (  Exception e) {
+  }
+}
+ catch (Exception e) {
+}
+
+====================================================
+InputNestedTryDepth.java at Line:31 col: 8
+try {
+  try {
+    try {
+      try {
+      }
+ catch (      Exception e) {
+      }
+    }
+ catch (    Exception e) {
+    }
+  }
+ catch (  Exception e) {
+  }
+}
+ catch (Exception e) {
+}
+
+====================================================
+InputNestedTryDepth.java at Line:12 col: 8
+try {
+  try {
+  }
+ catch (  Exception e) {
+  }
+}
+ catch (Exception e) {
+}
+
+====================================================
+InputNestedTryDepth.java at Line:20 col: 8
+try {
+  try {
+    try {
+    }
+ catch (    Exception e) {
+    }
+  }
+ catch (  Exception e) {
+  }
+}
+ catch (Exception e) {
+}
+
+
+---------------DESTRUCTIVE WRAPPING--------------
+InputFinalLocalVariableFalsePositives.java at Line:932 col: 12
+catch (Exception e) {
+  throw new Exception("Unable to convert rasters");
+}
+==============================================================================================
+InputFinalLocalVariableFalsePositives.java at Line:981 col: 12
+catch (Exception e) {
+  throw new Exception("Unable to convert images");
+}
+==============================================================================================
+InputFinalLocalVariableFalsePositives.java at Line:971 col: 8
+catch (Exception e) {
+  throw new Exception("Unable to convert images");
+}
+==============================================================================================
+InputFinalLocalVariableFalsePositives.java at Line:950 col: 12
+catch (Exception e) {
+  throw new Exception("Unable to convert rasters");
+}
+==============================================================================================
+InputFinalLocalVariableFalsePositives.java at Line:508 col: 8
+catch (Exception e) {
+  throw new ArrayIndexOutOfBoundsException(e.toString());
+}
+==============================================================================================
+
+---------------OVER CATCH--------------
+InputEmptyCatchBlockDefault.java at Line:33 col: 8
+Exception is catching RuntimeException, 
+InputEmptyCatchBlockViolationsByVariableName.java at Line:17 col: 8
+Exception is catching RuntimeException, 
+InputFinalLocalVariableAssignedMultipleTimes.java at Line:199 col: 8
+Exception is catching IllegalArgumentException, IllegalStateException, 
+InputEmptyCatchBlockDefaultLF.java at Line:33 col: 8
+Exception is catching RuntimeException, 
+InputEmptyCatchBlockDefaultLF.java at Line:25 col: 8
+Exception is catching RuntimeException, 
+InputEmptyCatchBlockViolationsByComment.java at Line:17 col: 8
+Exception is catching RuntimeException, 
+InputIndentationValidBlockIndent.java at Line:192 col: 26
+Exception is catching IOException, 
+InputIndentationTryWithResourcesStrict.java at Line:72 col: 8
+Exception is catching NumberFormatException, 
+InputEmptyCatchBlockViolationsByComment.java at Line:8 col: 8
+Exception is catching RuntimeException, 
+InputEmptyCatchBlockViolationsByVariableName.java at Line:8 col: 8
+Exception is catching RuntimeException, 
+InputIndentationTryResourcesNotStrict.java at Line:72 col: 8
+Exception is catching NumberFormatException, 
+InputEmptyCatchBlockDefault.java at Line:25 col: 8
+Exception is catching RuntimeException, 
